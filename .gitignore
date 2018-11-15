@@ -1,0 +1,15 @@
+/Makefile
+/.deps/*.Plo
+/myglib/.deps/*.Plo
+/test/.deps/*.Po
+/config.h
+/config.log
+/config.status
+/libspectrum.pc
+/libspectrum.qpg
+/libtool
+/stamp-h1
+
+/snap_accessors.c
+/tape_accessors.c
+/tape_set.c
