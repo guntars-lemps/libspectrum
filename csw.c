@@ -95,7 +95,7 @@ libspectrum_error libspectrum_csw_read(libspectrum_tape *tape, const libspectrum
         csw_block->scale = 3500000 / csw_block->scale; // approximate CPU speed
 
     if (csw_block->scale < 0 || csw_block->scale >= 0x80000) {
-        libspectrum_print_error (LIBSPECTRUM_ERROR_MEMORY, "libspectrum_csw_read: bad sample rate");
+        libspectrum_print_error(LIBSPECTRUM_ERROR_MEMORY, "libspectrum_csw_read: bad sample rate");
         return LIBSPECTRUM_ERROR_UNKNOWN;
     }
 
@@ -109,7 +109,9 @@ libspectrum_error libspectrum_csw_read(libspectrum_tape *tape, const libspectrum
         csw_block->data = NULL;
         csw_block->length = 0;
         error = libspectrum_zlib_inflate(buffer, length, &csw_block->data, &csw_block->length);
-        if (error != LIBSPECTRUM_ERROR_NONE) return error;
+        if (error != LIBSPECTRUM_ERROR_NONE) {
+            return error;
+        }
 #else
         libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN, "zlib not available to decompress gzipped file");
         return LIBSPECTRUM_ERROR_UNKNOWN;
@@ -155,7 +157,7 @@ static libspectrum_dword find_sample_rate(libspectrum_tape *tape)
 
     /* FIXME: If tape has only one block that is a sampled type, just use it's rate
           and if it RLE, we should just zlib and write */
-    for(block = libspectrum_tape_iterator_init(&iterator, tape);
+    for (block = libspectrum_tape_iterator_init(&iterator, tape);
               block;
               block = libspectrum_tape_iterator_next(&iterator))
     {
@@ -227,13 +229,15 @@ csw_write_body(libspectrum_buffer *buffer, libspectrum_tape *tape,
     libspectrum_tape_block_state it;
 
     if (libspectrum_tape_block_internal_init(&it, tape)) {
-        while(!(flags & LIBSPECTRUM_TAPE_FLAGS_STOP)) {
+        while (!(flags & LIBSPECTRUM_TAPE_FLAGS_STOP)) {
             libspectrum_dword pulse_length = 0;
 
             /* Use internal version of this that doesn't bugger up the
                   external tape status */
             error = libspectrum_tape_get_next_edge_internal(&pulse_tstates, &flags, tape, &it);
-            if (error != LIBSPECTRUM_ERROR_NONE) return error;
+            if (error != LIBSPECTRUM_ERROR_NONE) {
+                return error;
+            }
 
             balance_tstates += pulse_tstates;
 
@@ -266,7 +270,9 @@ csw_write_body(libspectrum_buffer *buffer, libspectrum_tape *tape,
         error = libspectrum_zlib_compress(libspectrum_buffer_get_data(buffer),
                                                                               libspectrum_buffer_get_data_size(buffer),
                                                                               &compressed_data, &compressed_length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
 
         libspectrum_buffer_clear(buffer);
         libspectrum_buffer_write(buffer, compressed_data, compressed_length);
@@ -320,7 +326,7 @@ libspectrum_error libspectrum_csw_write(libspectrum_buffer *new_buffer, libspect
 
     // encoding application description
     // No creator for now
-    for(i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         libspectrum_buffer_write_byte(new_buffer, 0);
     }
 

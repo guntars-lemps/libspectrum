@@ -60,15 +60,21 @@ libspectrum_error internal_sna_read(libspectrum_snap *snap, const libspectrum_by
     int error;
 
     error = identify_machine(buffer_length, snap);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     error = libspectrum_sna_read_header(buffer, buffer_length, snap);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     error = libspectrum_sna_read_data(
         &buffer[LIBSPECTRUM_SNA_HEADER_LENGTH],
         buffer_length - LIBSPECTRUM_SNA_HEADER_LENGTH, snap);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     return LIBSPECTRUM_ERROR_NONE;
 }
@@ -105,22 +111,22 @@ static int libspectrum_sna_read_header(const libspectrum_byte *buffer, size_t bu
         return LIBSPECTRUM_ERROR_CORRUPT;
     }
 
-    libspectrum_snap_set_a  (snap, buffer[22]);
-    libspectrum_snap_set_f  (snap, buffer[21]);
-    libspectrum_snap_set_bc (snap, buffer[13] + buffer[14]*0x100);
-    libspectrum_snap_set_de (snap, buffer[11] + buffer[12]*0x100);
-    libspectrum_snap_set_hl (snap, buffer[9] + buffer[10]*0x100);
-    libspectrum_snap_set_a_ (snap, buffer[8]);
-    libspectrum_snap_set_f_ (snap, buffer[7]);
+    libspectrum_snap_set_a(snap, buffer[22]);
+    libspectrum_snap_set_f(snap, buffer[21]);
+    libspectrum_snap_set_bc(snap, buffer[13] + buffer[14]*0x100);
+    libspectrum_snap_set_de(snap, buffer[11] + buffer[12]*0x100);
+    libspectrum_snap_set_hl(snap, buffer[9] + buffer[10]*0x100);
+    libspectrum_snap_set_a_(snap, buffer[8]);
+    libspectrum_snap_set_f_(snap, buffer[7]);
     libspectrum_snap_set_bc_(snap, buffer[5] + buffer[6]*0x100);
     libspectrum_snap_set_de_(snap, buffer[3] + buffer[4]*0x100);
     libspectrum_snap_set_hl_(snap, buffer[1] + buffer[2]*0x100);
-    libspectrum_snap_set_ix (snap, buffer[17] + buffer[18]*0x100);
-    libspectrum_snap_set_iy (snap, buffer[15] + buffer[16]*0x100);
-    libspectrum_snap_set_i  (snap, buffer[0]);
-    libspectrum_snap_set_r  (snap, buffer[20]);
-    libspectrum_snap_set_pc (snap, buffer[6] + buffer[7]*0x100);
-    libspectrum_snap_set_sp (snap, buffer[23] + buffer[24]*0x100);
+    libspectrum_snap_set_ix(snap, buffer[17] + buffer[18]*0x100);
+    libspectrum_snap_set_iy(snap, buffer[15] + buffer[16]*0x100);
+    libspectrum_snap_set_i(snap, buffer[0]);
+    libspectrum_snap_set_r(snap, buffer[20]);
+    libspectrum_snap_set_pc(snap, buffer[6] + buffer[7]*0x100);
+    libspectrum_snap_set_sp(snap, buffer[23] + buffer[24]*0x100);
 
     iff = (buffer[19] & 0x04) ? 1 : 0;
     libspectrum_snap_set_iff1(snap, iff);
@@ -168,13 +174,15 @@ static int libspectrum_sna_read_data(const libspectrum_byte *buffer, size_t buff
 
         // And split the pages up
         error = libspectrum_split_to_48k_pages(snap, buffer);
-        if (error != LIBSPECTRUM_ERROR_NONE) return error;
+        if (error != LIBSPECTRUM_ERROR_NONE) {
+            return error;
+        }
 
         break;
 
     case LIBSPECTRUM_MACHINE_PENT:
 
-        for(i=0; i<8; i++) {
+        for (i = 0; i < 8; i++) {
             libspectrum_byte *ram = libspectrum_new(libspectrum_byte, 0x4000);
             libspectrum_snap_set_pages(snap, i, ram);
         }
@@ -183,7 +191,9 @@ static int libspectrum_sna_read_data(const libspectrum_byte *buffer, size_t buff
         memcpy(libspectrum_snap_pages(snap, 2), &buffer[0x4000], 0x4000);
 
         error = libspectrum_sna_read_128_header(buffer + 0xc000, buffer_length - 0xc000, snap);
-        if (error != LIBSPECTRUM_ERROR_NONE) return error;
+        if (error != LIBSPECTRUM_ERROR_NONE) {
+            return error;
+        }
 
         page = libspectrum_snap_out_128_memoryport(snap) & 0x07;
         if (page == 5 || page == 2) {
@@ -202,7 +212,9 @@ static int libspectrum_sna_read_data(const libspectrum_byte *buffer, size_t buff
         buffer += 0xc000 + LIBSPECTRUM_SNA_128_HEADER_LENGTH;
         buffer_length -= 0xc000 + LIBSPECTRUM_SNA_128_HEADER_LENGTH;
         error = libspectrum_sna_read_128_data(buffer, buffer_length, snap);
-        if (error != LIBSPECTRUM_ERROR_NONE) return error;
+        if (error != LIBSPECTRUM_ERROR_NONE) {
+            return error;
+        }
 
         break;
 
@@ -238,7 +250,7 @@ static int libspectrum_sna_read_128_data(const libspectrum_byte *buffer, size_t 
 
     page = libspectrum_snap_out_128_memoryport(snap) & 0x07;
 
-    for(i=0; i<=7; i++) {
+    for (i = 0; i<=7; i++) {
 
         if (i==2 || i==5 || i==page) continue; // Already got this page
 
@@ -374,7 +386,7 @@ libspectrum_error libspectrum_sna_write(libspectrum_buffer *buffer, int *out_fla
         *out_flags |= LIBSPECTRUM_FLAG_SNAPSHOT_MAJOR_INFO_LOSS;
         // Fall through
     case LIBSPECTRUM_MACHINE_PENT:
-        snap_sp = libspectrum_snap_sp (snap);
+        snap_sp = libspectrum_snap_sp(snap);
         write_128k_sna(buffer_mem, snap);
         break;
 
@@ -399,23 +411,23 @@ libspectrum_error libspectrum_sna_write(libspectrum_buffer *buffer, int *out_fla
 
 static void write_header(libspectrum_buffer *buffer, libspectrum_snap *snap, libspectrum_word sp)
 {
-    libspectrum_buffer_write_byte(buffer, libspectrum_snap_i  (snap));
+    libspectrum_buffer_write_byte(buffer, libspectrum_snap_i(snap));
     libspectrum_buffer_write_word(buffer, libspectrum_snap_hl_(snap));
     libspectrum_buffer_write_word(buffer, libspectrum_snap_de_(snap));
     libspectrum_buffer_write_word(buffer, libspectrum_snap_bc_(snap));
-    libspectrum_buffer_write_byte(buffer, libspectrum_snap_f_ (snap));
-    libspectrum_buffer_write_byte(buffer, libspectrum_snap_a_ (snap));
-    libspectrum_buffer_write_word(buffer, libspectrum_snap_hl (snap));
-    libspectrum_buffer_write_word(buffer, libspectrum_snap_de (snap));
-    libspectrum_buffer_write_word(buffer, libspectrum_snap_bc (snap));
-    libspectrum_buffer_write_word(buffer, libspectrum_snap_iy (snap));
-    libspectrum_buffer_write_word(buffer, libspectrum_snap_ix (snap));
+    libspectrum_buffer_write_byte(buffer, libspectrum_snap_f_(snap));
+    libspectrum_buffer_write_byte(buffer, libspectrum_snap_a_(snap));
+    libspectrum_buffer_write_word(buffer, libspectrum_snap_hl(snap));
+    libspectrum_buffer_write_word(buffer, libspectrum_snap_de(snap));
+    libspectrum_buffer_write_word(buffer, libspectrum_snap_bc(snap));
+    libspectrum_buffer_write_word(buffer, libspectrum_snap_iy(snap));
+    libspectrum_buffer_write_word(buffer, libspectrum_snap_ix(snap));
 
     libspectrum_buffer_write_byte(buffer, libspectrum_snap_iff2(snap) ? 0x04 : 0x00);
 
-    libspectrum_buffer_write_byte(buffer, libspectrum_snap_r (snap));
-    libspectrum_buffer_write_byte(buffer, libspectrum_snap_f (snap));
-    libspectrum_buffer_write_byte(buffer, libspectrum_snap_a (snap));
+    libspectrum_buffer_write_byte(buffer, libspectrum_snap_r(snap));
+    libspectrum_buffer_write_byte(buffer, libspectrum_snap_f(snap));
+    libspectrum_buffer_write_byte(buffer, libspectrum_snap_a(snap));
 
     libspectrum_buffer_write_word(buffer, sp);
 
@@ -473,7 +485,7 @@ static void write_128k_sna(libspectrum_buffer *buffer, libspectrum_snap *snap)
                                                                   libspectrum_snap_out_128_memoryport(snap));
     libspectrum_buffer_write_byte(buffer, '\0');
 
-    for(i = 0; i < 8; i++) {
+    for (i = 0; i < 8; i++) {
 
         // Already written pages 5, 2 and whatever's paged in
         if (i == 5 || i == 2 || i == page) continue;

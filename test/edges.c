@@ -9,7 +9,9 @@ test_return_t check_edges(const char *filename, test_edge_sequence_t *edges, int
     test_return_t r = TEST_FAIL;
     test_edge_sequence_t *ptr = edges;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     tape = libspectrum_tape_alloc();
 
@@ -22,7 +24,7 @@ test_return_t check_edges(const char *filename, test_edge_sequence_t *edges, int
 
     libspectrum_free(buffer);
 
-    while(1) {
+    while (1) {
 
         libspectrum_dword tstates;
         int flags;
@@ -55,7 +57,9 @@ test_return_t check_edges(const char *filename, test_edge_sequence_t *edges, int
         }
     }
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return r;
 }

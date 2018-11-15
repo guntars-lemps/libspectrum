@@ -166,77 +166,99 @@ libspectrum_dword libspectrum_timings_ay_speed(libspectrum_machine machine)
 libspectrum_word libspectrum_timings_left_border(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->left_border;
 }
 
 libspectrum_word libspectrum_timings_horizontal_screen(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->horizontal_screen;
 }
 
 libspectrum_word libspectrum_timings_right_border(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->right_border;
 }
 
 libspectrum_word libspectrum_timings_horizontal_retrace(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->horizontal_retrace;
 }
 
 libspectrum_word libspectrum_timings_top_border(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->top_border;
 }
 
 libspectrum_word libspectrum_timings_vertical_screen(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->vertical_screen;
 }
 
 libspectrum_word libspectrum_timings_bottom_border(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->bottom_border;
 }
 
 libspectrum_word libspectrum_timings_vertical_retrace(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->vertical_retrace;
 }
 
 libspectrum_word libspectrum_timings_interrupt_length(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->interrupt_length;
 }
 
 libspectrum_word libspectrum_timings_top_left_pixel(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->top_left_pixel;
 }
 
 libspectrum_word libspectrum_timings_tstates_per_line(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->left_border + f->horizontal_screen + f->right_border +
      f->horizontal_retrace;
 }
@@ -244,7 +266,9 @@ libspectrum_word libspectrum_timings_tstates_per_line(libspectrum_machine machin
 libspectrum_word libspectrum_timings_lines_per_frame(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return f->top_border + f->vertical_screen + f->bottom_border +
      f->vertical_retrace;
 }
@@ -252,7 +276,9 @@ libspectrum_word libspectrum_timings_lines_per_frame(libspectrum_machine machine
 libspectrum_dword libspectrum_timings_tstates_per_frame(libspectrum_machine machine)
 {
     const timings_frame_t *f = base_timings[machine].frame_timings;
-    if (!f) return 0;
+    if (!f) {
+        return 0;
+    }
     return libspectrum_timings_tstates_per_line(machine) *
         ((libspectrum_dword)libspectrum_timings_lines_per_frame(machine));
 }

@@ -120,6 +120,6 @@ void libspectrum_mem_set_vtable(libspectrum_mem_vtable_t *table)
 
         g_mem_set_vtable(&glib_table);
     }
-#endif                  // #if !GLIB_CHECK_VERSION(2, 44, 0)
-#endif                  // #ifdef HAVE_LIB_GLIB
+#endif // #if !GLIB_CHECK_VERSION(2, 44, 0)
+#endif // #ifdef HAVE_LIB_GLIB
 }

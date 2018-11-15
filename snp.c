@@ -46,7 +46,9 @@ libspectrum_error libspectrum_snp_read(libspectrum_snap *snap, const libspectrum
 
     // Get the RAM
     error = libspectrum_split_to_48k_pages(snap, buffer);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     buffer += 0xc000;
 
@@ -68,9 +70,9 @@ libspectrum_error libspectrum_snp_read(libspectrum_snap *snap, const libspectrum
     libspectrum_snap_set_i      (snap, buffer[22]);
     libspectrum_snap_set_f_     (snap, buffer[23]);
     libspectrum_snap_set_a_     (snap, buffer[24]);
-    libspectrum_snap_set_bc_    (snap, buffer[25] + buffer[26] * 0x100);
-    libspectrum_snap_set_de_    (snap, buffer[27] + buffer[28] * 0x100);
-    libspectrum_snap_set_hl_    (snap, buffer[29] + buffer[30] * 0x100);
+    libspectrum_snap_set_bc_(snap, buffer[25] + buffer[26] * 0x100);
+    libspectrum_snap_set_de_(snap, buffer[27] + buffer[28] * 0x100);
+    libspectrum_snap_set_hl_(snap, buffer[29] + buffer[30] * 0x100);
 
     return LIBSPECTRUM_ERROR_NONE;
 }

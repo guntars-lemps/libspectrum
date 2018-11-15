@@ -33,7 +33,7 @@
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#endif            // #ifdef HAVE_UNISTD_H
+#endif // #ifdef HAVE_UNISTD_H
 
 #define ZLIB_CONST
 #include <zlib.h>
@@ -145,7 +145,7 @@ static libspectrum_error zlib_inflate(const libspectrum_byte *gzptr, size_t gzle
 
             error = inflate(&stream, 0);
 
-        } while(error == Z_OK);
+        } while (error == Z_OK);
 
     }
 
@@ -252,12 +252,16 @@ static libspectrum_error skip_gzip_header(const libspectrum_byte **gzptr, size_t
 
     if (flags & 0x08) {        // original file name present
         error = skip_null_terminated_string(gzptr, gzlength, "original name");
-        if (error) return error;
+        if (error) {
+            return error;
+        }
     }
 
     if (flags & 0x10) {        // comment present
         error = skip_null_terminated_string(gzptr, gzlength, "comment");
-        if (error) return error;
+        if (error) {
+            return error;
+        }
     }
 
     if (flags & 0x02) {        // header CRC present
@@ -277,7 +281,7 @@ static libspectrum_error skip_gzip_header(const libspectrum_byte **gzptr, size_t
 
 static libspectrum_error skip_null_terminated_string(const libspectrum_byte **ptr, size_t *length, const char *name)
 {
-    while(**ptr && *length) { (*ptr)++; (*length)--; }
+    while (**ptr && *length) { (*ptr)++; (*length)--; }
 
     if (!(*length)) {
         libspectrum_print_error(LIBSPECTRUM_ERROR_CORRUPT, "not enough data for gzip %s", name);

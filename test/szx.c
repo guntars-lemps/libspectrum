@@ -61,7 +61,7 @@ find_szx_chunk(libspectrum_buffer *buffer, const char *search)
     // Skip header
     data += 8; data_remaining -= 8;
 
-    while(data_remaining > 0) {
+    while (data_remaining > 0) {
         if (data_remaining < 8) {
             fprintf(stderr, "Chunk is less than 8 bytes long\n");
             return NULL;
@@ -132,7 +132,7 @@ szx_write_block_test_with_flags(const char *id, libspectrum_machine machine,
             r = TEST_FAIL;
         } else {
             r = TEST_PASS;
-            for(size_t i = expected_length; i < total_length; i++) {
+            for (size_t i = expected_length; i < total_length; i++) {
                 if (chunk->data[i]) {
                     r = TEST_FAIL;
                     break;
@@ -309,7 +309,7 @@ static void ay_setter(libspectrum_snap *snap)
     libspectrum_snap_set_melodik_active(snap, 0);
     libspectrum_snap_set_out_ay_registerport(snap, 0x08);
 
-    for(i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         libspectrum_snap_set_ay_registers(snap, i, ay_registers_data[i]);
     }
 }
@@ -570,7 +570,9 @@ szx_read_block_test_with_template(const char *id, const char *template,
 
     snprintf(filename, 256, template, id);
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     snap = libspectrum_snap_alloc();
 
@@ -721,7 +723,7 @@ static int test_49_check(libspectrum_snap *snap)
     if (libspectrum_snap_melodik_active(snap) != 0) failed = 1;
     if (libspectrum_snap_out_ay_registerport(snap) != 0x08) failed = 1;
 
-    for(i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         if (libspectrum_snap_ay_registers(snap, i) != ay_registers_data[i]) failed = 1;
     }
 
@@ -856,7 +858,7 @@ empty_ram_page_check(libspectrum_snap *snap,
 
     libspectrum_byte *page = get_ram_page(snap, 0);
     if (page) {
-        for(i = 0; i < 0x4000; i++) {
+        for (i = 0; i < 0x4000; i++) {
             if (page[i]) {
                 failed = 1;
                 break;

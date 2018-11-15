@@ -163,10 +163,14 @@ libspectrum_error libspectrum_mmc_insert(libspectrum_mmc_card *card, const char 
     libspectrum_dword c_size;
 
     libspectrum_mmc_eject(card);
-    if (!filename) return LIBSPECTRUM_ERROR_NONE;
+    if (!filename) {
+        return LIBSPECTRUM_ERROR_NONE;
+    }
 
     error = libspectrum_ide_insert_into_drive(&card->drive, filename);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     card->total_sectors = (libspectrum_dword)card->drive.cylinders *
         card->drive.heads * card->drive.sectors;
@@ -369,7 +373,7 @@ static void erase(libspectrum_mmc_card *card)
           depends on the card vendor */
     memset(card->send_buffer, 0x00, 512);
 
-    for(i = card->erase_block_start; i <= card->erase_block_end; i++) {
+    for (i = card->erase_block_start; i <= card->erase_block_end; i++) {
         libspectrum_ide_write_sector_to_hdf(&card->drive, card->cache, i, card->send_buffer);
     }
 
@@ -530,9 +534,9 @@ static int do_application_command(libspectrum_mmc_card *card)
             break;
 
         case SD_SEND_OP_COND:
-            /* SDHC cards return in_idle_state=1 when:
+            /* SDHC cards return in_idle_state = 1 when:
                   1. CMD8 was not issued before ACMD41
-                  2. ACMD41 is issued with HCS=0 (host only supports SDSC)
+                  2. ACMD41 is issued with HCS = 0 (host only supports SDSC)
             */
             if (card->cmd8_issued && (card->current_argument[0] & 0x40)) {
                 card->r1_status &= ~IN_IDLE_STATE_MASK;

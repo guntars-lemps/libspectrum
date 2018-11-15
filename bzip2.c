@@ -1,23 +1,23 @@
 /* bzip2.c: routines for bzip2 decompression of data
-      Copyright (c) 2003-2015 Philip Kendall
+   Copyright (c) 2003-2015 Philip Kendall
 
-      This program is free software; you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation; either version 2 of the License, or
-      (at your option) any later version.
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-      You should have received a copy of the GNU General Public License along
-      with this program; if not, write to the Free Software Foundation, Inc.,
-      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-      Author contact information:
+   Author contact information:
 
-      E-mail: philip-fuse@shadowmagic.org.uk
+   E-mail: philip-fuse@shadowmagic.org.uk
 
 */
 
@@ -92,7 +92,7 @@ libspectrum_error libspectrum_bzip2_inflate(const libspectrum_byte *bzptr, size_
         stream.next_in = (char*)bzptr; stream.avail_in = bzlength;
         stream.next_out = (char*)*outptr; stream.avail_out = bzlength;
 
-        while(1) {
+        while (1) {
 
             error = BZ2_bzDecompress(&stream);
 
@@ -130,9 +130,9 @@ libspectrum_error libspectrum_bzip2_inflate(const libspectrum_byte *bzptr, size_
     libspectrum_free(*outptr);
     return LIBSPECTRUM_ERROR_LOGIC;
             }
-        }                // Matches while(1) { ... }
+        }                // Matches while (1) { ... }
 
     }                // Matches if (*outlength) { ... }
 }
 
-#endif                // #ifdef HAVE_LIBBZ2
+#endif // #ifdef HAVE_LIBBZ2

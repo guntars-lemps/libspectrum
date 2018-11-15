@@ -27,11 +27,11 @@
 
 #ifdef HAVE_LIB_GLIB        // Only if we've got the real glib
 #include <glib.h>
-#endif                // #ifdef HAVE_LIB_GLIB
+#endif // #ifdef HAVE_LIB_GLIB
 
 #ifndef LIBSPECTRUM_LIBSPECTRUM_H
 #include "libspectrum.h"
-#endif                // #ifndef LIBSPECTRUM_LIBSPECTRUM_H
+#endif // #ifndef LIBSPECTRUM_LIBSPECTRUM_H
 
 #ifdef __GNUC__
 #define GCC_UNUSED __attribute__ ((unused))
@@ -39,15 +39,15 @@
 #else                // #ifdef __GNUC__
 #define GCC_UNUSED
 #define GCC_PRINTF(fmtstring, args)
-#endif                // #ifdef __GNUC__
+#endif // #ifdef __GNUC__
 
 #ifdef _MSC_VER
 #if _MSC_VER > 1200        // VC2005 or later
 #define __func__ __FUNCTION__
 #else                // #if _MSC_VER > 1200
 #define __func__ "__func__"
-#endif                // _MSC_VER > 1200
-#endif                // #ifdef _MSC_VER
+#endif // _MSC_VER > 1200
+#endif // #ifdef _MSC_VER
 
 #if defined(__GNUC__) && defined(__GNUC_MINOR__)
     #define GNUC_VERSION \
@@ -90,15 +90,15 @@
       strncasecmp -> _strnicmp */
 #if !defined(HAVE_SNPRINTF) && defined(HAVE__SNPRINTF)
 #define snprintf _snprintf
-#endif        // #if !defined(HAVE_SNPRINTF) && defined(HAVE__SNPRINTF)
+#endif // #if !defined(HAVE_SNPRINTF) && defined(HAVE__SNPRINTF)
 
 #if !defined(HAVE_STRCASECMP) && defined(HAVE__STRICMP)
 #define strcasecmp _stricmp
-#endif        // #if !defined(HAVE_STRCASECMP) && defined(HAVE__STRICMP)
+#endif // #if !defined(HAVE_STRCASECMP) && defined(HAVE__STRICMP)
 
 #if !defined(HAVE_STRNCASECMP) && defined(HAVE__STRNICMP)
 #define strncasecmp _strnicmp
-#endif        // #if !defined(HAVE_STRNCASECMP) && defined(HAVE__STRNICMP)
+#endif // #if !defined(HAVE_STRNCASECMP) && defined(HAVE__STRNICMP)
 
 #ifndef MAX
 #define MAX(a,b)    (((a) > (b)) ? (a) : (b))
@@ -355,8 +355,8 @@ atomic_lock(atomic_char *lock_ptr);
 void
 atomic_unlock(atomic_char *lock_ptr);
 
-#endif                // #ifdef HAVE_STDATOMIC_H
+#endif // #ifdef HAVE_STDATOMIC_H
 
-#endif                // #ifndef HAVE_LIB_GLIB
+#endif // #ifndef HAVE_LIB_GLIB
 
-#endif                // #ifndef LIBSPECTRUM_INTERNALS_H
+#endif // #ifndef LIBSPECTRUM_INTERNALS_H

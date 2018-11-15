@@ -245,7 +245,9 @@ libspectrum_ide_insert(libspectrum_ide_channel *chn,
     libspectrum_ide_drive *drv = &chn->drive[unit];
 
     libspectrum_ide_eject(chn, unit);
-    if (!filename) return LIBSPECTRUM_ERROR_NONE;
+    if (!filename) {
+        return LIBSPECTRUM_ERROR_NONE;
+    }
 
     return libspectrum_ide_insert_into_drive(drv, filename);
 }
@@ -308,7 +310,9 @@ int libspectrum_ide_dirty(libspectrum_ide_channel *chn, libspectrum_ide_unit uni
 
 libspectrum_error libspectrum_ide_eject_from_drive(libspectrum_ide_drive *drv, GHashTable *cache)
 {
-    if (!drv->disk) return LIBSPECTRUM_ERROR_NONE;
+    if (!drv->disk) {
+        return LIBSPECTRUM_ERROR_NONE;
+    }
 
     fclose(drv->disk);
     drv->disk = NULL;
@@ -427,7 +431,7 @@ int libspectrum_ide_read_sector_from_hdf(libspectrum_ide_drive *drv, GHashTable 
 
         int i;
 
-        for(i = 0; i < 256; i++) {
+        for (i = 0; i < 256; i++) {
             dest[i*2] = buffer[i];
             dest[i*2 + 1] = 0xff;
         }
@@ -470,7 +474,7 @@ void libspectrum_ide_write_sector_to_hdf(libspectrum_ide_drive *drv, GHashTable 
     // Pack or copy the data into the write cache
     if (drv->sector_size == 256) {
         int i;
-        for(i = 0; i < 256; i++) buffer[i] = src[i * 2];
+        for (i = 0; i < 256; i++) buffer[i] = src[i * 2];
     } else {
         memcpy(buffer, src, 512);
     }
@@ -490,7 +494,9 @@ static libspectrum_byte read_data(libspectrum_ide_channel *chn)
     libspectrum_ide_drive *drv = &chn->drive[chn->selected];
 
     // Meaningful data is only returned in PIO input phase
-    if (chn->phase != LIBSPECTRUM_IDE_PHASE_PIO_IN) return 0xff;
+    if (chn->phase != LIBSPECTRUM_IDE_PHASE_PIO_IN) {
+        return 0xff;
+    }
 
     switch(chn->databus) {
 
@@ -552,7 +558,9 @@ libspectrum_byte libspectrum_ide_read(libspectrum_ide_channel *chn, libspectrum_
         case LIBSPECTRUM_IDE_REGISTER_CYLINDER_HIGH:  return chn->cylinder_high;
         case LIBSPECTRUM_IDE_REGISTER_HEAD_DRIVE:     return chn->head;
         case LIBSPECTRUM_IDE_REGISTER_COMMAND_STATUS:
-            if (!drv->disk) return 0x00;
+            if (!drv->disk) {
+                return 0x00;
+            }
             else return drv->status;
             break;
 
@@ -658,7 +666,9 @@ static libspectrum_error seek(libspectrum_ide_channel *chn)
 
     // advance registers to next sector, for multiple sector accesses
     chn->sector_count--;
-    if (!chn->sector_count) return LIBSPECTRUM_ERROR_NONE;
+    if (!chn->sector_count) {
+        return LIBSPECTRUM_ERROR_NONE;
+    }
 
     if (chn->head & LIBSPECTRUM_IDE_HEAD_LBA) {
 

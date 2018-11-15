@@ -40,7 +40,7 @@ static void libspectrum_dck_block_alloc(libspectrum_dck_block **dck)
     *dck = libspectrum_new(libspectrum_dck_block, 1);
 
     (*dck)->bank = LIBSPECTRUM_DCK_BANK_DOCK;
-    for(i = 0; i < 8; i++) {
+    for (i = 0; i < 8; i++) {
         (*dck)->access[i] = LIBSPECTRUM_DCK_PAGE_NULL;
         (*dck)->pages[i] = NULL;
     }
@@ -53,7 +53,7 @@ static libspectrum_error libspectrum_dck_block_free(libspectrum_dck_block *dck, 
     size_t i;
 
     if (!keep_pages)
-        for(i = 0; i < 8; i++)
+        for (i = 0; i < 8; i++)
             if (dck->pages[i])
                 libspectrum_free(dck->pages[i]);
 
@@ -67,7 +67,7 @@ libspectrum_dck* libspectrum_dck_alloc(void)
 {
     libspectrum_dck *dck = libspectrum_new(libspectrum_dck, 1);
     size_t i;
-    for(i=0; i<256; i++) dck->dck[i] = NULL;
+    for (i = 0; i < 256; i++) dck->dck[i] = NULL;
     return dck;
 }
 
@@ -77,7 +77,7 @@ libspectrum_error libspectrum_dck_free(libspectrum_dck *dck, int keep_pages)
 {
     size_t i;
 
-    for(i=0; i<256; i++)
+    for (i = 0; i < 256; i++)
         if (dck->dck[i]) {
             libspectrum_dck_block_free(dck->dck[i], keep_pages);
             dck->dck[i] = NULL;
@@ -114,25 +114,31 @@ libspectrum_error libspectrum_dck_read2(libspectrum_dck *dck, const libspectrum_
     new_buffer = NULL;
 
     error = libspectrum_identify_file_raw(&raw_type, filename, buffer, length);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     error = libspectrum_identify_class(&class, raw_type);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (class == LIBSPECTRUM_CLASS_COMPRESSED) {
 
         size_t new_length;
 
         error = libspectrum_uncompress_file(&new_buffer, &new_length, NULL, raw_type, buffer, length, NULL);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
         buffer = new_buffer; length = new_length;
     }
 
     end = buffer + length;
 
-    for(i=0; i<256; i++) dck->dck[i]=NULL;
+    for (i = 0; i < 256; i++) dck->dck[i]=NULL;
 
-    while(buffer < end) {
+    while (buffer < end) {
         int pages = 0;
 
         if (buffer + 9 > end) {
@@ -157,7 +163,7 @@ libspectrum_error libspectrum_dck_read2(libspectrum_dck *dck, const libspectrum_
             goto end;
         }
 
-        for(i = 1; i < 9; i++)
+        for (i = 1; i < 9; i++)
             switch(buffer[i]) {
             case LIBSPECTRUM_DCK_PAGE_NULL:
             case LIBSPECTRUM_DCK_PAGE_RAM_EMPTY:
@@ -189,10 +195,10 @@ libspectrum_error libspectrum_dck_read2(libspectrum_dck *dck, const libspectrum_
         // Copy the bank ID
         dck->dck[num_dck_block]->bank = *buffer++;
         // Copy the page types
-        for(i = 0; i < 8; i++) dck->dck[num_dck_block]->access[i] = *buffer++;
+        for (i = 0; i < 8; i++) dck->dck[num_dck_block]->access[i] = *buffer++;
 
         // Allocate the pages
-        for(i = 0; i < 8; i++) {
+        for (i = 0; i < 8; i++) {
             switch(dck->dck[num_dck_block]->access[i]) {
             case LIBSPECTRUM_DCK_PAGE_NULL:
                 break;

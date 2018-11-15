@@ -26,7 +26,7 @@
 
 #ifndef LIBSPECTRUM_INTERNALS_H
 #include "internals.h"
-#endif                // #ifndef LIBSPECTRUM_INTERNALS_H
+#endif // #ifndef LIBSPECTRUM_INTERNALS_H
 
 /*
   * The individual block types
@@ -510,4 +510,4 @@ libspectrum_error
 libspectrum_tape_data_block_next_bit(libspectrum_tape_data_block *block, libspectrum_tape_data_block_state *state);
 
 
-#endif                // #ifndef LIBSPECTRUM_TAPE_BLOCK_H
+#endif // #ifndef LIBSPECTRUM_TAPE_BLOCK_H

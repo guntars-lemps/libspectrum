@@ -52,7 +52,7 @@ libspectrum_error internal_tap_read(libspectrum_tape *tape, const libspectrum_by
 
     ptr = buffer; end = buffer + length;
 
-    while(ptr < end) {
+    while (ptr < end) {
 
         /* If we've got less than two bytes for the length, something's
               gone wrong, so gone home */
@@ -107,7 +107,7 @@ libspectrum_error internal_tap_read(libspectrum_tape *tape, const libspectrum_by
             size_t i;
 
             parity = 0x00;
-            for(i = 0; i < data_length - 1; i++) {
+            for (i = 0; i < data_length - 1; i++) {
     parity ^= data[i];
             }
             data[data_length - 1] = parity;
@@ -132,7 +132,7 @@ libspectrum_error internal_tap_write(libspectrum_buffer *buffer, libspectrum_tap
     libspectrum_tape_block *block;
     libspectrum_error error;
 
-    for(block = libspectrum_tape_iterator_init(&iterator, tape);
+    for (block = libspectrum_tape_iterator_init(&iterator, tape);
               block;
               block = libspectrum_tape_iterator_next(&iterator))
     {
@@ -217,7 +217,9 @@ static libspectrum_error write_rom(libspectrum_tape_block *block, libspectrum_bu
 
     error = write_tap_block(buffer, libspectrum_tape_block_data(block),
                libspectrum_tape_block_data_length(block), type);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     return LIBSPECTRUM_ERROR_NONE;
 }
@@ -235,7 +237,9 @@ static libspectrum_error write_turbo(libspectrum_tape_block *block, libspectrum_
 
     error = write_tap_block(buffer, libspectrum_tape_block_data(block),
                libspectrum_tape_block_data_length(block), type);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     return LIBSPECTRUM_ERROR_NONE;
 }
@@ -253,7 +257,9 @@ static libspectrum_error write_pure_data(libspectrum_tape_block *block, libspect
 
     error = write_tap_block(buffer, libspectrum_tape_block_data(block),
                libspectrum_tape_block_data_length(block), type);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     return LIBSPECTRUM_ERROR_NONE;
 }
@@ -301,7 +307,9 @@ static libspectrum_error skip_block(libspectrum_tape_block *block, const char *m
     libspectrum_error error;
 
     error = libspectrum_tape_block_description(description, DESCRIPTION_LENGTH, block);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     if (message) {
         libspectrum_print_error(LIBSPECTRUM_ERROR_WARNING,

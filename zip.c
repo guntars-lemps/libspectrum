@@ -149,7 +149,9 @@ read_local_header(zip_local_header *local_info,
 
 static int match_file_names(const char *a, const char *b, const int ignore_case)
 {
-    if (!a || !b) return 0;
+    if (!a || !b) {
+        return 0;
+    }
 
     return (ignore_case ? (strcasecmp(a, b) == 0) :
                                                     (strcmp(a, b) == 0));
@@ -172,17 +174,21 @@ static libspectrum_error locate_directory_info(struct libspectrum_zip *z, zip_di
     libspectrum_error error;
 
     error = seek(z, -ZIP_DIRECTORY_INFO_SIZE, SEEK_END);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     /* Such a horrible mess just because of the stupid variable size comment at
           the end. Sigh. */
-    while(z->ptr >= z->input_data) {
+    while (z->ptr >= z->input_data) {
         if (z->ptr[0] == 'P' &&
                 z->ptr[1] == 'K' &&
                 z->ptr[2] == 5  &&
                 z->ptr[3] == 6) {
             error = read_directory_info(info, z->ptr, z->end);
-            if (!error) return LIBSPECTRUM_ERROR_NONE;
+            if (!error) {
+                return LIBSPECTRUM_ERROR_NONE;
+            }
         }
 
         z->ptr--;
@@ -202,7 +208,9 @@ static libspectrum_error locate_directory(struct libspectrum_zip *z)
     }
 
     error = locate_directory_info(z, &info);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (info.disk_index != info.directory_disk_index) {
         return LIBSPECTRUM_ERROR_CORRUPT;
@@ -229,7 +237,9 @@ libspectrum_error libspectrum_zip_rewind(struct libspectrum_zip *z)
         return LIBSPECTRUM_ERROR_INVALID;
 
     error = seek(z, z->directory_offset, SEEK_SET);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     z->file_index = 0;
     z->state = ARCHIVE_OPEN;
@@ -290,7 +300,7 @@ static int read_directory(struct libspectrum_zip *z)
             return 1;
         }
 
-    } while(retry);
+    } while (retry);
 
     return 0;
 }
@@ -302,7 +312,9 @@ libspectrum_zip_open(const libspectrum_byte *buffer, size_t length)
     struct libspectrum_zip *z;
     libspectrum_error error;
 
-    if (!buffer || !length) return NULL;
+    if (!buffer || !length) {
+        return NULL;
+    }
 
     z = libspectrum_new0(libspectrum_zip, 1);
     z->input_data = buffer;
@@ -348,9 +360,13 @@ static void dump_entry_stat(struct libspectrum_zip *z, zip_stat *info)
 
 int libspectrum_zip_next(struct libspectrum_zip *z, zip_stat *info)
 {
-    if (!z || z->state == ARCHIVE_CLOSED) return 1;
+    if (!z || z->state == ARCHIVE_CLOSED) {
+        return 1;
+    }
 
-    if (read_directory(z)) return 1;
+    if (read_directory(z)) {
+        return 1;
+    }
 
     dump_entry_stat(z, info);
 
@@ -368,7 +384,9 @@ int libspectrum_zip_locate(struct libspectrum_zip *z, const char *filename, int 
         return -1;
     }
 
-    if (!filename || strlen(filename) == 0) return -1;
+    if (!filename || strlen(filename) == 0) {
+        return -1;
+    }
 
     if (libspectrum_zip_rewind(z)) {
         close_zip(z);
@@ -379,7 +397,7 @@ int libspectrum_zip_locate(struct libspectrum_zip *z, const char *filename, int 
     ignore_case = (flags & ZIPFLAG_AUTOCASE) ? z->file_ignore_case :
                                                                                               (flags & ZIPFLAG_NOCASE);
 
-    while(read_directory(z) == 0) {
+    while (read_directory(z) == 0) {
         const char *fname, *slash;
 
         // Ignore directories in path
@@ -426,7 +444,9 @@ static libspectrum_error prepare_stream(struct libspectrum_zip *z)
 
     // Seek to the local header and read it
     error = seek(z, z->file_info.file_offset, SEEK_SET);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     retval = read_local_header(&header, z->ptr, z->end);
     if (!retval) {
@@ -455,7 +475,9 @@ static libspectrum_error prepare_stream(struct libspectrum_zip *z)
     skip = header.name_size + header.extra_field_size;
 
     error = seek(z, skip, SEEK_CUR);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     return LIBSPECTRUM_ERROR_NONE;
 }
@@ -483,7 +505,9 @@ static libspectrum_error decompress_stream(struct libspectrum_zip *z, libspectru
     }
 
     error = libspectrum_zip_inflate(z->ptr, file_compressed_left, buffer, buffer_size);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     z->ptr += file_compressed_left;
 
@@ -518,7 +542,9 @@ libspectrum_error libspectrum_zip_read(struct libspectrum_zip *z, libspectrum_by
     switch(compression) {
 
     case 0: // store
-        if (z->ptr + *size > z->end) return 1;
+        if (z->ptr + *size > z->end) {
+            return 1;
+        }
         *buffer = libspectrum_malloc(*size);
         memcpy(*buffer, z->ptr, *size);
         break;
@@ -560,9 +586,11 @@ libspectrum_error libspectrum_zip_blind_read(const libspectrum_byte *zipptr, siz
     libspectrum_error error;
 
     z = libspectrum_zip_open(zipptr, ziplength);
-    if (!z) return LIBSPECTRUM_ERROR_INVALID;
+    if (!z) {
+        return LIBSPECTRUM_ERROR_INVALID;
+    }
 
-    while(libspectrum_zip_next(z, &info) == 0) {
+    while (libspectrum_zip_next(z, &info) == 0) {
         libspectrum_id_t type;
         libspectrum_class_t class;
 

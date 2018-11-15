@@ -28,7 +28,7 @@
 #ifdef HAVE_ZLIB_H
 #define ZLIB_CONST
 #include <zlib.h>
-#endif                // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
 #include "internals.h"
 
@@ -122,7 +122,7 @@ static libspectrum_error inflate_block(libspectrum_byte **uncompressed, size_t *
     // No zlib, so can't inflate the block
     return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif                // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
 }
 
@@ -151,9 +151,11 @@ read_riff_chunk(libspectrum_snap *snap, int *compression GCC_UNUSED,
         return LIBSPECTRUM_ERROR_UNKNOWN;
     }
 
-    while(*buffer < end) {
+    while (*buffer < end) {
         error = read_chunk(snap, buffer, end);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
     }
 
     return LIBSPECTRUM_ERROR_NONE;
@@ -244,28 +246,28 @@ read_rz80_chunk(libspectrum_snap *snap, int *compression GCC_UNUSED,
         return LIBSPECTRUM_ERROR_UNKNOWN;
     }
 
-    libspectrum_snap_set_a   (snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_f   (snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_bc  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_de  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_hl  (snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_a(snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_f(snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_bc(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_de(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_hl(snap, libspectrum_read_word(buffer));
 
-    libspectrum_snap_set_a_  (snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_f_  (snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_bc_ (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_de_ (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_hl_ (snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_a_(snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_f_(snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_bc_(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_de_(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_hl_(snap, libspectrum_read_word(buffer));
 
-    libspectrum_snap_set_ix  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_iy  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_pc  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_sp  (snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_ix(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_iy(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_pc(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_sp(snap, libspectrum_read_word(buffer));
 
-    libspectrum_snap_set_i   (snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_r   (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_i(snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_r(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_iff1(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_iff2(snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_im  (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_im(snap, **buffer); (*buffer)++;
 
     libspectrum_snap_set_tstates(snap, libspectrum_read_dword(buffer));
 
@@ -311,7 +313,7 @@ read_r128_chunk(libspectrum_snap *snap, int *compression GCC_UNUSED,
     libspectrum_snap_set_out_128_memoryport(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_out_ay_registerport(snap, **buffer); (*buffer)++;
 
-    for(i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         libspectrum_snap_set_ay_registers(snap, i, **buffer); (*buffer)++;
     }
 
@@ -349,7 +351,9 @@ read_ram_chunk(libspectrum_snap *snap, int *compression,
     if (*compression) {
 
         error = inflate_block(&buffer2, &uncompressed_length, buffer, data_length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
 
         if (uncompressed_length != 0x4000) {
             libspectrum_free(buffer2);
@@ -449,7 +453,9 @@ static libspectrum_error read_chunk(libspectrum_snap *snap, const libspectrum_by
     int compression;
 
     error = read_chunk_header(id, &data_length, buffer, end);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (*buffer + data_length > end) {
         libspectrum_print_error(
@@ -461,11 +467,13 @@ static libspectrum_error read_chunk(libspectrum_snap *snap, const libspectrum_by
 
     done = 0;
 
-    for(i = 0; !done && i < ARRAY_SIZE(read_chunks); i++) {
+    for (i = 0; !done && i < ARRAY_SIZE(read_chunks); i++) {
 
         if (!strcmp(id, read_chunks[i].id)) {
             error = read_chunks[i].function(snap, &compression, buffer, end, data_length, read_chunks[i].parameter);
-            if (error) return error;
+            if (error) {
+                return error;
+            }
             done = 1;
         }
 
@@ -495,7 +503,7 @@ libspectrum_error libspectrum_zxs_read(libspectrum_snap *snap, const libspectrum
         // Tidy up any RAM pages we may have allocated
         size_t i;
 
-        for(i = 0; i < 8; i++) {
+        for (i = 0; i < 8; i++) {
             libspectrum_byte *page = libspectrum_snap_pages(snap, i);
             if (page) {
     libspectrum_free(page);

@@ -111,7 +111,7 @@ libspectrum_error internal_tzx_write(libspectrum_buffer* buffer, libspectrum_tap
     libspectrum_buffer_write_byte(buffer, 1); // Major version number
     libspectrum_buffer_write_byte(buffer, 20); // Minor version number
 
-    for(block = libspectrum_tape_iterator_init(&iterator, tape);
+    for (block = libspectrum_tape_iterator_init(&iterator, tape);
               block;
               block = libspectrum_tape_iterator_next(&iterator))
     {
@@ -284,7 +284,7 @@ static void tzx_write_pulses(libspectrum_tape_block *block, libspectrum_buffer *
 
     libspectrum_buffer_write_byte(buffer, LIBSPECTRUM_TAPE_BLOCK_PULSES);
     libspectrum_buffer_write_byte(buffer, count);
-    for(i = 0; i < count; i++)
+    for (i = 0; i < count; i++)
         libspectrum_buffer_write_word(
                                                         buffer,
                 libspectrum_tape_block_pulse_lengths(block, i));
@@ -386,13 +386,13 @@ static void serialise_generalised_data_symbols(libspectrum_buffer *buffer, libsp
 
     if (!libspectrum_tape_generalised_data_symbol_table_symbols_in_block(table)) return;
 
-    for(i = 0; i < symbols_in_table; i++) {
+    for (i = 0; i < symbols_in_table; i++) {
 
         libspectrum_tape_generalised_data_symbol *symbol = libspectrum_tape_generalised_data_symbol_table_symbol(table, i);
 
         libspectrum_buffer_write_byte(buffer, libspectrum_tape_generalised_data_symbol_type(symbol));
 
-        for(j = 0; j < max_pulses; j++)
+        for (j = 0; j < max_pulses; j++)
             libspectrum_buffer_write_word(buffer, libspectrum_tape_generalised_data_symbol_pulse(symbol, j));
 
     }
@@ -417,16 +417,20 @@ write_generalised_data_block(libspectrum_tape_block *block,
     libspectrum_buffer_write_word(buffer, pause_ms);
 
     error = serialise_generalised_data_table(buffer, pilot_table);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     error = serialise_generalised_data_table(buffer, data_table);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     serialise_generalised_data_symbols(buffer, pilot_table);
 
     pilot_symbol_count = libspectrum_tape_generalised_data_symbol_table_symbols_in_block(pilot_table);
 
-    for(i = 0; i < pilot_symbol_count; i++) {
+    for (i = 0; i < pilot_symbol_count; i++) {
         libspectrum_buffer_write_byte(buffer, libspectrum_tape_block_pilot_symbols(block, i));
         libspectrum_buffer_write_word(buffer, libspectrum_tape_block_pilot_repeats(block, i));
     }
@@ -516,14 +520,14 @@ static void tzx_write_select(libspectrum_tape_block *block, libspectrum_buffer *
     count = libspectrum_tape_block_count(block);
     total_length = 4 + 3 * count;
 
-    for(i = 0; i < count; i++)
+    for (i = 0; i < count; i++)
         total_length += strlen((char*)libspectrum_tape_block_texts(block, i));
 
     libspectrum_buffer_write_byte(buffer, LIBSPECTRUM_TAPE_BLOCK_SELECT);
     libspectrum_buffer_write_word(buffer, total_length);
     libspectrum_buffer_write_byte(buffer, count);
 
-    for(i = 0; i < count; i++) {
+    for (i = 0; i < count; i++) {
         libspectrum_buffer_write_word(buffer, libspectrum_tape_block_offsets(block, i));
         tzx_write_string(buffer, libspectrum_tape_block_texts(block, i));
     }
@@ -574,7 +578,7 @@ static void tzx_write_archive_info(libspectrum_tape_block *block, libspectrum_bu
     // 1 count byte, 2 bytes (ID and length) for every string
     total_length = 1 + 2 * count;
     // And then the length of all the strings
-    for(i = 0; i < count; i++)
+    for (i = 0; i < count; i++)
         total_length += strlen((char*)libspectrum_tape_block_texts(block, i));
 
     // Write out the metadata
@@ -583,7 +587,7 @@ static void tzx_write_archive_info(libspectrum_tape_block *block, libspectrum_bu
     libspectrum_buffer_write_byte(buffer, count);
 
     // And the strings
-    for(i = 0; i < count; i++) {
+    for (i = 0; i < count; i++) {
         libspectrum_buffer_write_byte(buffer, libspectrum_tape_block_ids(block, i));
         tzx_write_string(buffer, libspectrum_tape_block_texts(block, i));
     }
@@ -600,9 +604,9 @@ static void tzx_write_hardware(libspectrum_tape_block *block, libspectrum_buffer
     libspectrum_buffer_write_byte(buffer, count);
 
     // And the info
-    for(i = 0; i < count; i++) {
+    for (i = 0; i < count; i++) {
         libspectrum_buffer_write_byte(buffer, libspectrum_tape_block_types(block, i));
-        libspectrum_buffer_write_byte(buffer, libspectrum_tape_block_ids  (block, i));
+        libspectrum_buffer_write_byte(buffer, libspectrum_tape_block_ids(block, i));
         libspectrum_buffer_write_byte(buffer, libspectrum_tape_block_values(block, i));
     }
 }
@@ -639,7 +643,7 @@ static void write_pulse(libspectrum_dword pulse_length)
                            rle_state.tape_length);
     }
 
-    for(i = pulse_length; i > 0; i--) {
+    for (i = pulse_length; i > 0; i--) {
         if (rle_state.level)
             *(rle_state.tape_buffer + rle_state.length) |=
                 1 << (7 - rle_state.bits_used);
@@ -689,7 +693,7 @@ tzx_write_rle(libspectrum_tape_block *block, libspectrum_buffer *buffer,
         return error;
     }
 
-    while(!(flags & LIBSPECTRUM_TAPE_FLAGS_BLOCK)) {
+    while (!(flags & LIBSPECTRUM_TAPE_FLAGS_BLOCK)) {
         libspectrum_dword pulse_length = 0;
 
         /* Use internal version of this that doesn't bugger up the
@@ -774,7 +778,7 @@ static void tzx_write_pulse_sequence(libspectrum_tape_block *block, libspectrum_
 
     add_set_signal_level_block(buffer, 0);
 
-    for(i = 0; i<count; i++) {
+    for (i = 0; i < count; i++) {
         size_t pulse_repeats = libspectrum_tape_block_pulse_repeats(block, i);
         if (pulse_repeats > 1) {
             // Close off any outstanding pulse blocks
@@ -838,19 +842,21 @@ static libspectrum_error tzx_write_data_block(libspectrum_tape_block *block, lib
         data_table.symbols[0].edge_type = LIBSPECTRUM_TAPE_GENERALISED_DATA_SYMBOL_EDGE;
         data_table.symbols[0].lengths = libspectrum_new(libspectrum_word,
                                               libspectrum_tape_block_bit0_pulse_count(block));
-        for(i = 0; i < libspectrum_tape_block_bit0_pulse_count(block); i++) {
+        for (i = 0; i < libspectrum_tape_block_bit0_pulse_count(block); i++) {
             data_table.symbols[0].lengths[i] = libspectrum_tape_block_bit0_pulses(block, i);
         }
 
         data_table.symbols[1].edge_type = LIBSPECTRUM_TAPE_GENERALISED_DATA_SYMBOL_EDGE;
         data_table.symbols[1].lengths = libspectrum_new(libspectrum_word,
                                               libspectrum_tape_block_bit1_pulse_count(block));
-        for(i = 0; i < libspectrum_tape_block_bit1_pulse_count(block); i++) {
+        for (i = 0; i < libspectrum_tape_block_bit1_pulse_count(block); i++) {
             data_table.symbols[1].lengths[i] = libspectrum_tape_block_bit1_pulses(block, i);
         }
 
         error = write_generalised_data_block(block, buffer, 1, &pilot_table, &data_table, 0);
-        if (error != LIBSPECTRUM_ERROR_NONE) return error;
+        if (error != LIBSPECTRUM_ERROR_NONE) {
+            return error;
+        }
     } else {
         pure_data = libspectrum_tape_block_alloc(LIBSPECTRUM_TAPE_BLOCK_PURE_DATA);
 
@@ -894,7 +900,7 @@ static void tzx_write_bytes(libspectrum_buffer* buffer, size_t length, size_t le
     size_t i, shifter;
 
     // Write out the appropriate number of length bytes
-    for(i=0, shifter = length; i<length_bytes; i++, shifter >>= 8)
+    for (i = 0, shifter = length; i < length_bytes; i++, shifter >>= 8)
         libspectrum_buffer_write_byte(buffer, shifter & 0xff);
 
     // And then the actual data
@@ -910,6 +916,6 @@ static void tzx_write_string(libspectrum_buffer *buffer, char *string)
     libspectrum_buffer_write_byte(buffer, length);
 
     // Fix up line endings as we go
-    for(i=0; i<length; i++)
+    for (i = 0; i < length; i++)
         libspectrum_buffer_write_byte(buffer, string[i] == '\x0a' ? '\x0d' : string[i]);
 }

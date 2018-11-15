@@ -141,7 +141,7 @@ libspectrum_error libspectrum_wav_read(libspectrum_tape *tape, const char *filen
     do {
         libspectrum_byte val = 0;
         int i;
-        for(i = 7; i >= 0; i--) {
+        for (i = 7; i >= 0; i--) {
             if (*from++ > 127) val |= 1 << i;
         }
         *to++ = val;
@@ -166,4 +166,4 @@ libspectrum_error libspectrum_wav_read(libspectrum_tape *tape, const char *filen
     return LIBSPECTRUM_ERROR_NONE;
 }
 
-#endif    // #ifdef HAVE_LIB_AUDIOFILE
+#endif // #ifdef HAVE_LIB_AUDIOFILE

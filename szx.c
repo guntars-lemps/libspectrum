@@ -316,7 +316,7 @@ write_zmmc_chunk(libspectrum_buffer *buffer, libspectrum_buffer *data, libspectr
 static libspectrum_error
 write_if2r_chunk(libspectrum_buffer *buffer, libspectrum_buffer *block_data, libspectrum_snap *snap);
 
-#endif                // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
 static void
 write_dock_chunk(libspectrum_buffer *buffer, libspectrum_buffer *block_data,
@@ -351,7 +351,7 @@ read_ram_page(libspectrum_byte **data, size_t *page,
 
     libspectrum_error error;
 
-#endif            // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
     if (data_length < 3) {
         libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN,
@@ -369,7 +369,9 @@ read_ram_page(libspectrum_byte **data, size_t *page,
 #ifdef HAVE_ZLIB_H
 
         error = libspectrum_zlib_inflate(*buffer, data_length - 3, data, &uncompressed_length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
 
         *buffer += data_length - 3;
 
@@ -382,7 +384,7 @@ read_ram_page(libspectrum_byte **data, size_t *page,
 );
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif            // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
     } else {
 
@@ -414,7 +416,9 @@ read_atrp_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
     libspectrum_word flags;
 
     error = read_ram_page(&data, &page, buffer, data_length, 0x4000, &flags);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (page >= SNAPSHOT_ZXATASP_PAGES) {
         libspectrum_print_error(LIBSPECTRUM_ERROR_CORRUPT,
@@ -451,7 +455,7 @@ read_ay_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
     libspectrum_snap_set_out_ay_registerport(snap, **buffer); (*buffer)++;
 
-    for(i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         libspectrum_snap_set_ay_registers(snap, i, **buffer); (*buffer)++;
     }
 
@@ -490,9 +494,9 @@ read_b128_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
     libspectrum_snap_set_beta_drive_count(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_beta_system(snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_beta_track (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_beta_track(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_beta_sector(snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_beta_data  (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_beta_data(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_beta_status(snap, **buffer); (*buffer)++;
 
     if (libspectrum_snap_beta_custom_rom(snap)) {
@@ -504,7 +508,9 @@ read_b128_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
             size_t uncompressed_length = 0;
 
             error = libspectrum_zlib_inflate(*buffer, data_length - 10, &rom_data, &uncompressed_length);
-            if (error) return error;
+            if (error) {
+                return error;
+            }
 
             if (uncompressed_length != expected_length) {
     libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN,
@@ -671,9 +677,9 @@ read_opus_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
     libspectrum_snap_set_opus_data_reg_b(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_opus_data_dir_b(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_opus_drive_count(snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_opus_track (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_opus_track(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_opus_sector(snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_opus_data  (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_opus_data(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_opus_status(snap, **buffer); (*buffer)++;
 
     if (flags & ZXSTOPUSF_COMPRESSED) {
@@ -707,7 +713,9 @@ read_opus_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
         }
 
         error = libspectrum_zlib_inflate(*buffer, disc_ram_length, &ram_data, &uncompressed_length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
 
         if (uncompressed_length != expected_length) {
             libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN,
@@ -726,7 +734,9 @@ read_opus_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
             uncompressed_length = 0;
 
             error = libspectrum_zlib_inflate(*buffer, disc_rom_length, &rom_data, &uncompressed_length);
-            if (error) return error;
+            if (error) {
+                return error;
+            }
 
             expected_length = 0x2000;
 
@@ -753,7 +763,7 @@ read_opus_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 );
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif            // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
     } else {
 
@@ -860,9 +870,9 @@ read_plsd_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
     libspectrum_snap_set_plusd_control(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_plusd_drive_count(snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_plusd_track (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_plusd_track(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_plusd_sector(snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_plusd_data  (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_plusd_data(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_plusd_status(snap, **buffer); (*buffer)++;
 
     if (flags & ZXSTPLUSDF_COMPRESSED) {
@@ -896,7 +906,9 @@ read_plsd_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
         }
 
         error = libspectrum_zlib_inflate(*buffer, disc_ram_length, &ram_data, &uncompressed_length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
 
         if (uncompressed_length != expected_length) {
             libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN,
@@ -915,7 +927,9 @@ read_plsd_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
             uncompressed_length = 0;
 
             error = libspectrum_zlib_inflate(*buffer, disc_rom_length, &rom_data, &uncompressed_length);
-            if (error) return error;
+            if (error) {
+                return error;
+            }
 
             if (uncompressed_length != expected_length) {
                 libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN,
@@ -940,7 +954,7 @@ read_plsd_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 );
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif            // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
     } else {
 
@@ -1009,7 +1023,9 @@ read_cfrp_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
     libspectrum_word flags;
 
     error = read_ram_page(&data, &page, buffer, data_length, 0x4000, &flags);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (page >= SNAPSHOT_ZXCF_PAGES) {
         libspectrum_print_error(LIBSPECTRUM_ERROR_CORRUPT,
@@ -1073,7 +1089,7 @@ static void add_joystick(libspectrum_snap *snap, libspectrum_joystick type, int 
     size_t i;
     size_t num_joysticks = libspectrum_snap_joystick_active_count(snap);
 
-    for(i = 0; i < num_joysticks; i++) {
+    for (i = 0; i < num_joysticks; i++) {
         if (libspectrum_snap_joystick_list(snap, i) == type) {
             libspectrum_snap_set_joystick_inputs(snap, i, inputs |
                                                                     libspectrum_snap_joystick_inputs(snap, i));
@@ -1263,7 +1279,9 @@ read_ramp_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
 
     error = read_ram_page(&data, &page, buffer, data_length, 0x4000, &flags);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (page > 63) {
         libspectrum_print_error(LIBSPECTRUM_ERROR_CORRUPT,
@@ -1357,9 +1375,9 @@ read_z80r_chunk(libspectrum_snap *snap, libspectrum_word version,
         libspectrum_snap_set_a(snap, **buffer); (*buffer)++;
     }
 
-    libspectrum_snap_set_bc  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_de  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_hl  (snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_bc(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_de(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_hl(snap, libspectrum_read_word(buffer));
 
     if (ctx->swap_af) {
         libspectrum_snap_set_a_(snap, **buffer); (*buffer)++;
@@ -1369,20 +1387,20 @@ read_z80r_chunk(libspectrum_snap *snap, libspectrum_word version,
         libspectrum_snap_set_a_(snap, **buffer); (*buffer)++;
     }
 
-    libspectrum_snap_set_bc_ (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_de_ (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_hl_ (snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_bc_(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_de_(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_hl_(snap, libspectrum_read_word(buffer));
 
-    libspectrum_snap_set_ix  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_iy  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_sp  (snap, libspectrum_read_word(buffer));
-    libspectrum_snap_set_pc  (snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_ix(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_iy(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_sp(snap, libspectrum_read_word(buffer));
+    libspectrum_snap_set_pc(snap, libspectrum_read_word(buffer));
 
-    libspectrum_snap_set_i   (snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_r   (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_i(snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_r(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_iff1(snap, **buffer); (*buffer)++;
     libspectrum_snap_set_iff2(snap, **buffer); (*buffer)++;
-    libspectrum_snap_set_im  (snap, **buffer); (*buffer)++;
+    libspectrum_snap_set_im(snap, **buffer); (*buffer)++;
 
     libspectrum_snap_set_tstates(snap, libspectrum_read_dword(buffer));
 
@@ -1515,7 +1533,9 @@ read_if1_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
             size_t uncompressed_length = 0;
 
             libspectrum_error error = libspectrum_zlib_inflate(*buffer, data_length - 40, &rom_data, &uncompressed_length);
-            if (error) return error;
+            if (error) {
+                return error;
+            }
 
             if (uncompressed_length != expected_length) {
                 libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN,
@@ -1542,7 +1562,7 @@ read_if1_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 );
             return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif            // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
         } else {
 
@@ -1598,7 +1618,7 @@ static libspectrum_error szx_extract_roms(libspectrum_snap *snap, libspectrum_by
     num_16k_roms = length / standard_rom_length;
     additional_rom_length = length % standard_rom_length;
 
-    for(i = 0; i < num_16k_roms; i++)
+    for (i = 0; i < num_16k_roms; i++)
         szx_set_custom_rom(snap, i, rom_data + (i * standard_rom_length), standard_rom_length);
 
     /* Timex 2068 machines have a 16k and an 8k ROM, all other machines just have
@@ -1640,7 +1660,9 @@ read_rom_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
         size_t uncompressed_length = 0;
 
         libspectrum_error error = libspectrum_zlib_inflate(*buffer, data_length - 6, &rom_data, &uncompressed_length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
 
         if (uncompressed_length != expected_length) {
             libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN,
@@ -1664,7 +1686,7 @@ read_rom_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 );
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif            // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
     } else {
 
@@ -1778,7 +1800,9 @@ read_if2r_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
     uncompressed_length = 0x4000;
 
     error = libspectrum_zlib_inflate(*buffer, data_length - 4, &buffer2, &uncompressed_length);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     *buffer += data_length - 4;
 
@@ -1797,7 +1821,7 @@ read_if2r_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 );
     return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif            // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
 }
 
@@ -1814,7 +1838,9 @@ read_dock_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
     libspectrum_byte writeable;
 
     error = read_ram_page(&data, &page, buffer, data_length, 0x2000, &flags);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (page > 7) {
         libspectrum_print_error(LIBSPECTRUM_ERROR_CORRUPT,
@@ -1881,7 +1907,9 @@ read_divxxx_chunk(libspectrum_snap *snap, const libspectrum_byte **buffer,
         size_t uncompressed_length = 0;
 
         error = libspectrum_zlib_inflate(*buffer, data_length - 4, &eprom_data, &uncompressed_length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
 
         if (uncompressed_length != expected_length) {
             libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN,
@@ -1977,7 +2005,9 @@ read_divxxx_ram_chunk(libspectrum_snap *snap, const libspectrum_byte **buffer,
     libspectrum_word flags;
 
     error = read_ram_page(&data, &page, buffer, data_length, 0x2000, &flags);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (page >= page_count) {
         libspectrum_print_error(LIBSPECTRUM_ERROR_CORRUPT,
@@ -2045,7 +2075,9 @@ read_snet_memory(libspectrum_snap *snap, const libspectrum_byte **buffer,
         libspectrum_byte *uncompressed_data;
 
         error = libspectrum_zlib_inflate(*buffer, data_length, &uncompressed_data, &uncompressed_length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
 
         *buffer += data_length;
 
@@ -2291,7 +2323,9 @@ read_mfce_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
         size_t uncompressed_length = 0;
 
         error = libspectrum_zlib_inflate(*buffer, disc_ram_length, &ram_data, &uncompressed_length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
 
         if (uncompressed_length != expected_ram_length) {
             libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN,
@@ -2315,7 +2349,7 @@ read_mfce_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 );
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif            // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
     } else {
 
@@ -2459,7 +2493,9 @@ read_chunk(libspectrum_snap *snap, libspectrum_word version,
     size_t i; int done;
 
     error = read_chunk_header(id, &data_length, buffer, end);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (end - *buffer < data_length) {
         libspectrum_print_error(
@@ -2471,11 +2507,13 @@ read_chunk(libspectrum_snap *snap, libspectrum_word version,
 
     done = 0;
 
-    for(i = 0; !done && i < ARRAY_SIZE(read_chunks); i++) {
+    for (i = 0; !done && i < ARRAY_SIZE(read_chunks); i++) {
 
         if (!memcmp(id, read_chunks[i].id, 4)) {
             error = read_chunks[i].function(snap, version, buffer, end, data_length, ctx);
-            if (error) return error;
+            if (error) {
+                return error;
+            }
             done = 1;
         }
 
@@ -2617,7 +2655,7 @@ libspectrum_error libspectrum_szx_read(libspectrum_snap *snap, const libspectrum
     ctx = libspectrum_new(szx_context, 1);
     ctx->swap_af = 0;
 
-    while(buffer < end) {
+    while (buffer < end) {
         error = read_chunk(snap, version, &buffer, end, ctx);
         if (error) {
             libspectrum_free(ctx);
@@ -2658,7 +2696,9 @@ libspectrum_szx_write(libspectrum_buffer *buffer, int *out_flags,
     compress = !(in_flags & LIBSPECTRUM_FLAG_SNAPSHOT_NO_COMPRESSION);
 
     error = write_file_header(buffer, out_flags, snap);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     block_data = libspectrum_buffer_alloc();
 
@@ -2699,7 +2739,7 @@ libspectrum_szx_write(libspectrum_buffer *buffer, int *out_flags,
     if (libspectrum_snap_zxatasp_active(snap)) {
         write_zxat_chunk(buffer, block_data, snap);
 
-        for(i = 0; i < libspectrum_snap_zxatasp_pages(snap); i++) {
+        for (i = 0; i < libspectrum_snap_zxatasp_pages(snap); i++) {
             write_atrp_chunk(buffer, block_data, snap, i, compress);
         }
     }
@@ -2707,7 +2747,7 @@ libspectrum_szx_write(libspectrum_buffer *buffer, int *out_flags,
     if (libspectrum_snap_zxcf_active(snap)) {
         write_zxcf_chunk(buffer, block_data, snap);
 
-        for(i = 0; i < libspectrum_snap_zxcf_pages(snap); i++) {
+        for (i = 0; i < libspectrum_snap_zxcf_pages(snap); i++) {
             write_cfrp_chunk(buffer, block_data, snap, i, compress);
         }
     }
@@ -2722,11 +2762,11 @@ libspectrum_szx_write(libspectrum_buffer *buffer, int *out_flags,
 #else
         // IF2R blocks only support writing compressed images
         *out_flags |= LIBSPECTRUM_FLAG_SNAPSHOT_MAJOR_INFO_LOSS;
-#endif                         // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
     }
 
     if (libspectrum_snap_dock_active(snap)) {
-        for(i = 0; i < 8; i++) {
+        for (i = 0; i < 8; i++) {
             if (libspectrum_snap_exrom_cart(snap, i)) {
                 write_dock_chunk(buffer, block_data, snap, 0,
                                                     libspectrum_snap_exrom_cart(snap, i), i,
@@ -2785,7 +2825,7 @@ libspectrum_szx_write(libspectrum_buffer *buffer, int *out_flags,
             return error;
         }
 
-        for(i = 0; i < libspectrum_snap_divide_pages(snap); i++) {
+        for (i = 0; i < libspectrum_snap_divide_pages(snap); i++) {
             write_dirp_chunk(buffer, block_data, snap, i, compress);
         }
     }
@@ -2797,7 +2837,7 @@ libspectrum_szx_write(libspectrum_buffer *buffer, int *out_flags,
             return error;
         }
 
-        for(i = 0; i < libspectrum_snap_divmmc_pages(snap); i++) {
+        for (i = 0; i < libspectrum_snap_divmmc_pages(snap); i++) {
             write_dmrp_chunk(buffer, block_data, snap, i, compress);
         }
     }
@@ -2816,12 +2856,16 @@ libspectrum_szx_write(libspectrum_buffer *buffer, int *out_flags,
 
     if (libspectrum_snap_multiface_active(snap)) {
         error = write_mfce_chunk(buffer, block_data, snap, compress);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
     }
 
     if (libspectrum_snap_ulaplus_active(snap)) {
         error = write_pltt_chunk(buffer, block_data, snap, compress);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
     }
 
     if (libspectrum_snap_zxmmc_active(snap)) {
@@ -2902,28 +2946,28 @@ static void write_z80r_chunk(libspectrum_buffer *buffer, libspectrum_buffer *dat
     libspectrum_dword tstates;
     libspectrum_byte flags, tstates_remaining;
 
-    libspectrum_buffer_write_byte(data, libspectrum_snap_f   (snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_a   (snap));
-    libspectrum_buffer_write_word(data, libspectrum_snap_bc  (snap));
-    libspectrum_buffer_write_word(data, libspectrum_snap_de  (snap));
-    libspectrum_buffer_write_word(data, libspectrum_snap_hl  (snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_f(snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_a(snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_bc(snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_de(snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_hl(snap));
 
-    libspectrum_buffer_write_byte(data, libspectrum_snap_f_  (snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_a_  (snap));
-    libspectrum_buffer_write_word(data, libspectrum_snap_bc_ (snap));
-    libspectrum_buffer_write_word(data, libspectrum_snap_de_ (snap));
-    libspectrum_buffer_write_word(data, libspectrum_snap_hl_ (snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_f_(snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_a_(snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_bc_(snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_de_(snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_hl_(snap));
 
-    libspectrum_buffer_write_word(data, libspectrum_snap_ix  (snap));
-    libspectrum_buffer_write_word(data, libspectrum_snap_iy  (snap));
-    libspectrum_buffer_write_word(data, libspectrum_snap_sp  (snap));
-    libspectrum_buffer_write_word(data, libspectrum_snap_pc  (snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_ix(snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_iy(snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_sp(snap));
+    libspectrum_buffer_write_word(data, libspectrum_snap_pc(snap));
 
-    libspectrum_buffer_write_byte(data, libspectrum_snap_i   (snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_r   (snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_i(snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_r(snap));
     libspectrum_buffer_write_byte(data, libspectrum_snap_iff1(snap));
     libspectrum_buffer_write_byte(data, libspectrum_snap_iff2(snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_im  (snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_im(snap));
 
     tstates = libspectrum_snap_tstates(snap);
 
@@ -2991,7 +3035,7 @@ static void write_joystick(libspectrum_buffer *buffer, int *out_flags, libspectr
     int i;
     libspectrum_byte type = ZXJT_NONE;
 
-    for(i = 0; i < num_joysticks; i++) {
+    for (i = 0; i < num_joysticks; i++) {
         if (libspectrum_snap_joystick_inputs(snap, i) & connection) {
             switch(libspectrum_snap_joystick_list(snap, i)) {
             case LIBSPECTRUM_JOYSTICK_CURSOR:
@@ -3041,7 +3085,7 @@ static void write_joy_chunk(libspectrum_buffer *buffer, libspectrum_buffer *data
     int i;
 
     flags = 0;
-    for(i = 0; i < num_joysticks; i++) {
+    for (i = 0; i < num_joysticks; i++) {
         if (libspectrum_snap_joystick_list(snap, i) ==
                 LIBSPECTRUM_JOYSTICK_KEMPSTON)
             flags |= ZXSTJOYF_ALWAYSPORT31;
@@ -3111,7 +3155,7 @@ static libspectrum_error write_rom_chunk(libspectrum_buffer *buffer, libspectrum
     int flags = 0;
     int use_compression;
 
-    for(i = 0; i< libspectrum_snap_custom_rom_pages(snap); i++) {
+    for (i = 0; i< libspectrum_snap_custom_rom_pages(snap); i++) {
         data_length += libspectrum_snap_rom_length(snap, i);
     }
 
@@ -3186,7 +3230,7 @@ static libspectrum_error write_rom_chunk(libspectrum_buffer *buffer, libspectrum
     data = libspectrum_buffer_alloc();
 
     // Copy the rom data into a single block ready for putting in the szx
-    for(i = 0; i< libspectrum_snap_custom_rom_pages(snap); i++) {
+    for (i = 0; i< libspectrum_snap_custom_rom_pages(snap); i++) {
         libspectrum_buffer_write(data, libspectrum_snap_roms(snap, i),
                                                             libspectrum_snap_rom_length(snap, i));
     }
@@ -3236,16 +3280,16 @@ static void write_ram_pages(libspectrum_buffer *buffer, libspectrum_buffer *bloc
         write_ramp_chunk(buffer, block_data, snap, 7, compress);
 
         if (capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_SCORP_MEMORY) {
-            for(i = 8; i < 16; i++) {
+            for (i = 8; i < 16; i++) {
                 write_ramp_chunk(buffer, block_data, snap, i, compress);
             }
         } else if (capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_PENT512_MEMORY) {
-            for(i = 8; i < 32; i++) {
+            for (i = 8; i < 32; i++) {
                 write_ramp_chunk(buffer, block_data, snap, i, compress);
             }
 
             if (capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_PENT1024_MEMORY) {
-    for(i = 32; i < 64; i++) {
+    for (i = 32; i < 64; i++) {
       write_ramp_chunk(buffer, block_data, snap, i, compress);
     }
             }
@@ -3306,7 +3350,7 @@ static void write_ay_chunk(libspectrum_buffer *buffer, libspectrum_buffer *data,
     libspectrum_buffer_write_byte(data,
                                                                   libspectrum_snap_out_ay_registerport(snap));
 
-    for(i = 0; i < 16; i++)
+    for (i = 0; i < 16; i++)
         libspectrum_buffer_write_byte(data,
                                                                       libspectrum_snap_ay_registers(snap, i));
 
@@ -3349,9 +3393,9 @@ static void write_b128_chunk(libspectrum_buffer *buffer, libspectrum_buffer *dat
 
     libspectrum_buffer_write_byte(data, libspectrum_snap_beta_drive_count(snap));
     libspectrum_buffer_write_byte(data, libspectrum_snap_beta_system(snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_beta_track (snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_beta_track(snap));
     libspectrum_buffer_write_byte(data, libspectrum_snap_beta_sector(snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_beta_data  (snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_beta_data(snap));
     libspectrum_buffer_write_byte(data, libspectrum_snap_beta_status(snap));
 
     if (libspectrum_snap_beta_custom_rom(snap) && rom_data) {
@@ -3388,7 +3432,7 @@ static int compress_data(libspectrum_buffer *dest, const libspectrum_byte *src_d
 
     }
 
-#endif                // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
     libspectrum_buffer_write(dest, src_data, src_data_length);
 
@@ -3448,10 +3492,10 @@ static libspectrum_error write_if1_chunk(libspectrum_buffer *buffer, libspectrum
     libspectrum_buffer_write_byte(data, drive_count);
 
     // Skip 'reserved' data
-    for(i = 0; i < 3; i++) libspectrum_buffer_write_byte(data, 0);
+    for (i = 0; i < 3; i++) libspectrum_buffer_write_byte(data, 0);
 
     // Skip 'reserved' data
-    for(i = 0; i < 8; i++) libspectrum_buffer_write_dword(data, 0);
+    for (i = 0; i < 8; i++) libspectrum_buffer_write_dword(data, 0);
 
     libspectrum_buffer_write_word(data, uncompressed_rom_length);
 
@@ -3522,10 +3566,10 @@ static libspectrum_error write_opus_chunk(libspectrum_buffer *buffer, libspectru
     libspectrum_buffer_write_byte(data, libspectrum_snap_opus_data_reg_b(snap));
     libspectrum_buffer_write_byte(data, libspectrum_snap_opus_data_dir_b(snap));
     libspectrum_buffer_write_byte(data, libspectrum_snap_opus_drive_count(snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_opus_track  (snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_opus_sector (snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_opus_data   (snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_opus_status (snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_opus_track(snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_opus_sector(snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_opus_data(snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_opus_status(snap));
 
     libspectrum_buffer_write_buffer(data, ram_buffer);
 
@@ -3592,10 +3636,10 @@ static libspectrum_error write_plsd_chunk(libspectrum_buffer *buffer, libspectru
     }
     libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_control(snap));
     libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_drive_count(snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_track  (snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_sector (snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_data   (snap));
-    libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_status (snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_track(snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_sector(snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_data(snap));
+    libspectrum_buffer_write_byte(data, libspectrum_snap_plusd_status(snap));
 
     libspectrum_buffer_write_buffer(data, ram_buffer);
 
@@ -3617,7 +3661,7 @@ static void write_zxat_chunk(libspectrum_buffer *buffer, libspectrum_buffer *dat
     libspectrum_word flags;
 
     flags = 0;
-    if (libspectrum_snap_zxatasp_upload (snap)) flags |= ZXSTZXATF_UPLOAD;
+    if (libspectrum_snap_zxatasp_upload(snap)) flags |= ZXSTZXATF_UPLOAD;
     if (libspectrum_snap_zxatasp_writeprotect(snap))
         flags |= ZXSTZXATF_WRITEPROTECT;
     libspectrum_buffer_write_word(data, flags);
@@ -3676,7 +3720,9 @@ static libspectrum_error write_if2r_chunk(libspectrum_buffer *buffer, libspectru
     compressed_data = NULL;
 
     error = libspectrum_zlib_compress(data, data_length, &compressed_data, &compressed_length);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     libspectrum_buffer_write_dword(block_data, compressed_length);
     libspectrum_buffer_write(block_data, compressed_data, compressed_length);
@@ -3688,7 +3734,7 @@ static libspectrum_error write_if2r_chunk(libspectrum_buffer *buffer, libspectru
     return LIBSPECTRUM_ERROR_NONE;
 }
 
-#endif                         // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
 static void
 write_dock_chunk(libspectrum_buffer *buffer, libspectrum_buffer *block_data,

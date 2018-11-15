@@ -121,7 +121,7 @@ libspectrum_error internal_tzx_read(libspectrum_tape *tape, const libspectrum_by
     // Just skip the version numbers
     ptr += 2;
 
-    while(ptr < end) {
+    while (ptr < end) {
 
         // Get the ID of the next block
         libspectrum_tape_type id = *ptr++;
@@ -395,7 +395,7 @@ static libspectrum_error tzx_read_pulses_block(libspectrum_tape *tape, const lib
     lengths = libspectrum_new(libspectrum_dword, count);
 
     // Copy the data across
-    for(i = 0; i < count; i++) {
+    for (i = 0; i < count; i++) {
         lengths[i] = (*ptr)[0] + (*ptr)[1] * 0x100; (*ptr) += 2;
     }
     libspectrum_tape_block_set_pulse_lengths(block, lengths);
@@ -580,7 +580,7 @@ tzx_read_generalised_data(libspectrum_tape *tape,
     symbols = libspectrum_new(libspectrum_byte, symbol_count);
     repeats = libspectrum_new(libspectrum_word, symbol_count);
 
-    for(i = 0; i < symbol_count; i++) {
+    for (i = 0; i < symbol_count; i++) {
         symbols[i] = **ptr; (*ptr)++;
         repeats[i] = (*ptr)[0] + 0x100 * (*ptr)[1]; (*ptr) += 2;
     }
@@ -774,11 +774,11 @@ static libspectrum_error tzx_read_select(libspectrum_tape *tape, const libspectr
     libspectrum_tape_block_set_texts(block, descriptions);
 
     // Read in the data
-    for(i = 0; i < count; i++) {
+    for (i = 0; i < count; i++) {
 
         // Check we've got the offset and a length byte
         if (end - (*ptr) < 3) {
-            for(j = 0; j < i; j++) libspectrum_free(descriptions[j]);
+            for (j = 0; j < i; j++) libspectrum_free(descriptions[j]);
             libspectrum_free(descriptions); libspectrum_free(offsets); libspectrum_free(block);
             libspectrum_print_error(LIBSPECTRUM_ERROR_CORRUPT, "tzx_read_select: not enough data in buffer");
             return LIBSPECTRUM_ERROR_CORRUPT;
@@ -790,7 +790,7 @@ static libspectrum_error tzx_read_select(libspectrum_tape *tape, const libspectr
         // Get the description of this selection
         error = tzx_read_string(ptr, end, &descriptions[i]);
         if (error) {
-            for(j = 0; j < i; j++) libspectrum_free(descriptions[j]);
+            for (j = 0; j < i; j++) libspectrum_free(descriptions[j]);
             libspectrum_free(descriptions); libspectrum_free(offsets); libspectrum_free(block);
             return error;
         }
@@ -935,12 +935,12 @@ static libspectrum_error tzx_read_archive_info(libspectrum_tape *tape, const lib
     strings = libspectrum_new(char *, count);
     libspectrum_tape_block_set_texts(block, strings);
 
-    for(i = 0; i < count; i++) {
+    for (i = 0; i < count; i++) {
 
         // Must be ID byte and length byte
         if (end - (*ptr) < 2) {
             size_t j;
-            for(j=0; j<i; j++) libspectrum_free(strings[j]);
+            for (j = 0; j < i; j++) libspectrum_free(strings[j]);
             libspectrum_free(strings); libspectrum_free(ids); libspectrum_free(block);
             libspectrum_print_error(
                 LIBSPECTRUM_ERROR_CORRUPT,
@@ -956,7 +956,7 @@ static libspectrum_error tzx_read_archive_info(libspectrum_tape *tape, const lib
         error = tzx_read_string(ptr, end, &strings[i]);
         if (error) {
             size_t j;
-            for(j = 0; j < i; j++) libspectrum_free(strings[j]);
+            for (j = 0; j < i; j++) libspectrum_free(strings[j]);
             libspectrum_free(strings); libspectrum_free(ids); libspectrum_free(block);
             return error;
         }
@@ -1005,7 +1005,7 @@ static libspectrum_error tzx_read_hardware(libspectrum_tape *tape, const libspec
     libspectrum_tape_block_set_values(block, values);
 
     // Actually read in all the data
-    for(i = 0; i < count; i++) {
+    for (i = 0; i < count; i++) {
         types[i]  = **ptr; (*ptr)++;
         ids[i]    = **ptr; (*ptr)++;
         values[i] = **ptr; (*ptr)++;
@@ -1089,7 +1089,7 @@ static libspectrum_error tzx_read_data(const libspectrum_byte **ptr, const libsp
     }
 
     (*length) = 0;
-    for(i=0; i<bytes; i++, multiplier *= 0x100) {
+    for (i = 0; i < bytes; i++, multiplier *= 0x100) {
         *length += **ptr * multiplier; (*ptr)++;
     }
 
@@ -1121,13 +1121,15 @@ static libspectrum_error tzx_read_string(const libspectrum_byte **ptr, const lib
     char *ptr2;
 
     error = tzx_read_data(ptr, end, &length, -1, (libspectrum_byte**)dest);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     // Null terminate the string
     (*dest)[length] = '\0';
 
     // Translate line endings
-    for(ptr2 = (*dest); *ptr2; ptr2++) if (*ptr2 == '\r') *ptr2 = '\n';
+    for (ptr2 = (*dest); *ptr2; ptr2++) if (*ptr2 == '\r') *ptr2 = '\n';
 
     return LIBSPECTRUM_ERROR_NONE;
 }

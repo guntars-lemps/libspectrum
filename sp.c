@@ -82,9 +82,9 @@ libspectrum_error libspectrum_sp_read(libspectrum_snap *snap, const libspectrum_
     libspectrum_snap_set_a      (snap, buffer[7]);
     libspectrum_snap_set_ix     (snap, buffer[8] + buffer[9] * 0x100);
     libspectrum_snap_set_iy     (snap, buffer[10] + buffer[11] * 0x100);
-    libspectrum_snap_set_bc_    (snap, buffer[12] + buffer[13] * 0x100);
-    libspectrum_snap_set_de_    (snap, buffer[14] + buffer[15] * 0x100);
-    libspectrum_snap_set_hl_    (snap, buffer[16] + buffer[17] * 0x100);
+    libspectrum_snap_set_bc_(snap, buffer[12] + buffer[13] * 0x100);
+    libspectrum_snap_set_de_(snap, buffer[14] + buffer[15] * 0x100);
+    libspectrum_snap_set_hl_(snap, buffer[16] + buffer[17] * 0x100);
     libspectrum_snap_set_f_     (snap, buffer[18]);
     libspectrum_snap_set_a_     (snap, buffer[19]);
     libspectrum_snap_set_r      (snap, buffer[20]);

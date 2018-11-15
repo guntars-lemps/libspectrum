@@ -69,7 +69,9 @@ static test_return_t load_tape(libspectrum_tape **tape, const char *filename, li
     libspectrum_byte *buffer = NULL;
     size_t filesize = 0;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     *tape = libspectrum_tape_alloc();
 
@@ -93,9 +95,13 @@ static test_return_t read_tape(const char *filename, libspectrum_error expected_
     test_return_t r;
 
     r = load_tape(&tape, filename, expected_result);
-    if (r != TEST_PASS) return r;
+    if (r != TEST_PASS) {
+        return r;
+    }
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return TEST_PASS;
 }
@@ -107,7 +113,9 @@ static test_return_t read_snap(const char *filename, const char *filename_to_pas
     size_t filesize = 0;
     libspectrum_snap *snap;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     snap = libspectrum_snap_alloc();
 
@@ -134,7 +142,9 @@ static test_return_t play_tape(const char *filename)
     libspectrum_dword tstates;
     int flags;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     tape = libspectrum_tape_alloc();
 
@@ -154,9 +164,11 @@ static test_return_t play_tape(const char *filename)
             return TEST_INCOMPLETE;
         }
 
-    } while(!(flags & LIBSPECTRUM_TAPE_FLAGS_STOP));
+    } while (!(flags & LIBSPECTRUM_TAPE_FLAGS_STOP));
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return TEST_PASS;
 }
@@ -181,7 +193,9 @@ static test_return_t test_2(void)
     libspectrum_dword tstates;
     int flags;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     tape = libspectrum_tape_alloc();
 
@@ -213,7 +227,9 @@ static test_return_t test_2(void)
         return TEST_FAIL;
     }
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return TEST_PASS;
 }
@@ -239,7 +255,9 @@ static test_return_t test_3(void)
         return TEST_FAIL;
     }
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return TEST_PASS;
 }
@@ -311,7 +329,9 @@ static test_return_t test_13(void)
     libspectrum_dword tstates;
     int flags;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     tape = libspectrum_tape_alloc();
 
@@ -329,7 +349,9 @@ static test_return_t test_13(void)
         return TEST_INCOMPLETE;
     }
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return TEST_PASS;
 }
@@ -368,7 +390,9 @@ static test_return_t test_19(void)
     test_return_t r;
 
     r = load_tape(&tape, filename, LIBSPECTRUM_ERROR_NONE);
-    if (r) return r;
+    if (r) {
+        return r;
+    }
 
     if (libspectrum_tape_write(&buffer, &length, tape,
                                                             LIBSPECTRUM_ID_TAPE_TAP)) {
@@ -379,7 +403,9 @@ static test_return_t test_19(void)
 
     libspectrum_free(buffer);
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return TEST_PASS;
 }
@@ -407,7 +433,9 @@ static test_return_t test_22(void)
     const char *filename = STATIC_TEST_PATH("writeprotected.mdr");
     test_return_t r;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     /* writeprotected.mdr deliberately includes an extra 0 on the end;
           we want this in the buffer so we know what happens if we read off the
@@ -439,7 +467,9 @@ static test_return_t test_23(void)
     const char *filename = STATIC_TEST_PATH("writeprotected.mdr");
     test_return_t r;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     /* writeprotected.mdr deliberately includes an extra 0 on the end;
           we want this in the buffer so we know what happens if we read off the
@@ -500,7 +530,9 @@ static test_return_t test_24(void)
     libspectrum_dword *next_size = &expected_sizes[0];
     test_return_t r = TEST_PASS;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     tape = libspectrum_tape_alloc();
 
@@ -515,7 +547,7 @@ static test_return_t test_24(void)
 
     block = libspectrum_tape_iterator_init(&it, tape);
 
-    while(block)
+    while (block)
     {
         libspectrum_dword actual_size = libspectrum_tape_block_length(block);
 
@@ -530,7 +562,9 @@ static test_return_t test_24(void)
         next_size++;
     }
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return r;
 }
@@ -544,7 +578,9 @@ static test_return_t test_25(void)
     int flags;
     test_return_t r = TEST_INCOMPLETE;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     snap = libspectrum_snap_alloc();
 
@@ -607,7 +643,9 @@ static test_return_t test_26(void)
     int flags;
     test_return_t r = TEST_INCOMPLETE;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     snap = libspectrum_snap_alloc();
 
@@ -664,7 +702,9 @@ static test_return_t test_27(void)
     libspectrum_snap *snap;
     test_return_t r = TEST_INCOMPLETE;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     snap = libspectrum_snap_alloc();
 
@@ -711,7 +751,9 @@ static test_return_t test_30(void)
     test_return_t r;
 
     r = load_tape(&tape, filename, LIBSPECTRUM_ERROR_NONE);
-    if (r) return r;
+    if (r) {
+        return r;
+    }
 
     if (libspectrum_tape_write(&buffer, &length, tape,
                                                             LIBSPECTRUM_ID_TAPE_CSW)) {
@@ -722,7 +764,9 @@ static test_return_t test_30(void)
 
     libspectrum_free(buffer);
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return TEST_PASS;
 }
@@ -737,7 +781,9 @@ static test_return_t test_71(void)
     libspectrum_rzx *rzx;
     test_return_t r = TEST_INCOMPLETE;
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     snap = libspectrum_snap_alloc();
 
@@ -817,7 +863,9 @@ static test_return_t test_72(void)
           tzx */
     int expected_block_count = ARRAY_SIZE(expected_next_block_types);
 
-    if (read_file(&buffer, &filesize, filename)) return TEST_INCOMPLETE;
+    if (read_file(&buffer, &filesize, filename)) {
+        return TEST_INCOMPLETE;
+    }
 
     tape = libspectrum_tape_alloc();
 
@@ -833,7 +881,7 @@ static test_return_t test_72(void)
 
     block = libspectrum_tape_iterator_init(&it, tape);
 
-    while(libspectrum_tape_iterator_peek_next(it))
+    while (libspectrum_tape_iterator_peek_next(it))
     {
         libspectrum_tape_type actual_next_block_type = libspectrum_tape_block_type(libspectrum_tape_iterator_peek_next(it));
 
@@ -853,7 +901,9 @@ static test_return_t test_72(void)
             r = TEST_FAIL;
     }
 
-    if (libspectrum_tape_free(tape)) return TEST_INCOMPLETE;
+    if (libspectrum_tape_free(tape)) {
+        return TEST_INCOMPLETE;
+    }
 
     return r;
 }
@@ -948,7 +998,7 @@ static void parse_test_specs(char **specs, int count)
 {
     int i, j;
 
-    for(i = 0; i < count; i++) {
+    for (i = 0; i < count; i++) {
 
         const char *spec = specs[i];
         const char *dash = strchr(spec, '-');
@@ -957,7 +1007,7 @@ static void parse_test_specs(char **specs, int count)
             int begin = atoi(spec), end = atoi(dash + 1);
             if (begin < 1) begin = 1;
             if (end == 0 || end > test_count) end = test_count;
-            for(j = begin; j <= end; j++) tests[j-1].active = 1;
+            for (j = begin; j <= end; j++) tests[j-1].active = 1;
         } else {
             int test = atoi(spec);
             if (test < 1 || test > test_count) continue;
@@ -978,7 +1028,9 @@ int main(int argc, char *argv[])
     progname = argv[0];
 
     if (libspectrum_check_version(LIBSPECTRUM_MIN_VERSION)) {
-        if (libspectrum_init()) return 2;
+        if (libspectrum_init()) {
+            return 2;
+        }
     } else {
         fprintf(stderr, "%s: libspectrum version %s found, but %s required",
          progname, libspectrum_version(), LIBSPECTRUM_MIN_VERSION);
@@ -986,12 +1038,12 @@ int main(int argc, char *argv[])
     }
 
     if (argc < 2) {
-        for(i = 0; i < test_count; i++) tests[i].active = 1;
+        for (i = 0; i < test_count; i++) tests[i].active = 1;
     } else {
         parse_test_specs(&argv[1], argc - 1);
     }
 
-    for(i = 0, test = tests;
+    for (i = 0, test = tests;
               i < test_count;
               i++, test++) {
         printf("Test %d: %s... ", (int)i + 1, test->description);

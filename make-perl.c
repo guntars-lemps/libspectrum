@@ -101,7 +101,7 @@ int main(void)
 #endif
     }
 
-#endif                // #ifdef HAVE_STDINT_H
+#endif // #ifdef HAVE_STDINT_H
 
     printf("CODE\n}\n\n");
 
@@ -155,7 +155,7 @@ int main(void)
 "typedef void           (*GFreeFunc)            (gpointer       data);\n"
 "\n"
 "\n"
-"WIN32_DLL GSList *g_slist_insert_sorted    (GSList        *list,\n"
+"WIN32_DLL GSList *g_slist_insert_sorted(GSList        *list,\n"
 "                         gpointer     data,\n"
 "                         GCompareFunc     func);\n"
 "\n"
@@ -185,11 +185,11 @@ int main(void)
 "\n"
 "WIN32_DLL GSList *g_slist_nth        (GSList        *list,\n""                     guint        n);\n"
 "\n"
-"WIN32_DLL GSList *g_slist_find_custom    (GSList        *list,\n"
+"WIN32_DLL GSList *g_slist_find_custom(GSList        *list,\n"
 "                     gconstpointer    data,\n"
 "                     GCompareFunc    func);\n"
 "\n"
-"WIN32_DLL gint    g_slist_position    (GSList        *list,\n""                     GSList        *llink);\n"
+"WIN32_DLL gint    g_slist_position(GSList        *list,\n""                     GSList        *llink);\n"
 "\n"
 "typedef struct _GHashTable    GHashTable;\n"
 "\n"
@@ -203,36 +203,36 @@ int main(void)
 "                         gpointer    value,\n"
 "                         gpointer    user_data);\n"
 "\n"
-"WIN32_DLL gint    g_int_equal (gconstpointer   v,\n""                   gconstpointer   v2);\n"
-"WIN32_DLL guint    g_int_hash  (gconstpointer   v);\n"
+"WIN32_DLL gint    g_int_equal(gconstpointer   v,\n""                   gconstpointer   v2);\n"
+"WIN32_DLL guint    g_int_hash(gconstpointer   v);\n"
 "\n"
-"WIN32_DLL gint    g_str_equal (gconstpointer   v,\n""                   gconstpointer   v2);\n"
-"WIN32_DLL guint    g_str_hash  (gconstpointer   v);\n"
+"WIN32_DLL gint    g_str_equal(gconstpointer   v,\n""                   gconstpointer   v2);\n"
+"WIN32_DLL guint    g_str_hash(gconstpointer   v);\n"
 "\n"
-"WIN32_DLL GHashTable *g_hash_table_new    (GHashFunc     hash_func,\n""                     GCompareFunc     key_compare_func);\n"
+"WIN32_DLL GHashTable *g_hash_table_new(GHashFunc     hash_func,\n""                     GCompareFunc     key_compare_func);\n"
 "\n"
-"WIN32_DLL GHashTable *g_hash_table_new_full (GHashFunc       hash_func,\n"
+"WIN32_DLL GHashTable *g_hash_table_new_full(GHashFunc       hash_func,\n"
 "                                             GCompareFunc    key_equal_func,\n"
 "                                             GDestroyNotify  key_destroy_func,\n"
 "                                             GDestroyNotify  value_destroy_func);\n"
 "\n"
-"WIN32_DLL void    g_hash_table_destroy    (GHashTable    *hash_table);\n"
+"WIN32_DLL void    g_hash_table_destroy(GHashTable    *hash_table);\n"
 "\n"
-"WIN32_DLL void    g_hash_table_insert    (GHashTable    *hash_table,\n"
+"WIN32_DLL void    g_hash_table_insert(GHashTable    *hash_table,\n"
 "                     gpointer     key,\n"
 "                     gpointer     value);\n"
 "\n"
-"WIN32_DLL gpointer g_hash_table_lookup    (GHashTable    *hash_table,\n""                     gconstpointer     key);\n"
+"WIN32_DLL gpointer g_hash_table_lookup(GHashTable    *hash_table,\n""                     gconstpointer     key);\n"
 "\n"
-"WIN32_DLL void    g_hash_table_foreach (GHashTable    *hash_table,\n"
+"WIN32_DLL void    g_hash_table_foreach(GHashTable    *hash_table,\n"
 "                         GHFunc    func,\n"
 "                         gpointer  user_data);\n"
 "\n"
-"WIN32_DLL guint    g_hash_table_foreach_remove    (GHashTable    *hash_table,\n"
+"WIN32_DLL guint    g_hash_table_foreach_remove(GHashTable    *hash_table,\n"
 "                         GHRFunc     func,\n"
 "                         gpointer     user_data);\n"
 "\n"
-"WIN32_DLL guint    g_hash_table_size (GHashTable    *hash_table);\n"
+"WIN32_DLL guint    g_hash_table_size(GHashTable    *hash_table);\n"
 "\n"
 "typedef struct _GArray GArray;\n"
 "\n"
@@ -268,7 +268,7 @@ int main(void)
         return 1;
     }
     printf("CODE\n");
-#endif                // #ifdef HAVE_LIB_GLIB
+#endif // #ifdef HAVE_LIB_GLIB
 
     printf("}\n\n");
 
@@ -319,17 +319,17 @@ int main(void)
     printf("libspectrum_zlib_compress(const libspectrum_byte *data, size_t length,\n");
     printf("               libspectrum_byte **gzptr, size_t *gzlength);\n\n");
 
-#endif                // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
 #ifdef HAVE_LIBBZ2
     printf("\n/* we support files compressed with bz2 */\n");
     printf("#define    LIBSPECTRUM_SUPPORTS_BZ2_COMPRESSION    (1)\n\n");
-#endif                // #ifdef HAVE_LIBBZ2
+#endif // #ifdef HAVE_LIBBZ2
 
 #ifdef HAVE_LIB_AUDIOFILE
     printf("\n/* we support wav files */\n");
     printf("#define    LIBSPECTRUM_SUPPORTS_AUDIOFILE    (1)\n\n");
-#endif                // #ifdef HAVE_LIB_AUDIOFILE
+#endif // #ifdef HAVE_LIB_AUDIOFILE
 
     printf("CODE\n}\n\n");
 

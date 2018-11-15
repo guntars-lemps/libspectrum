@@ -27,7 +27,7 @@
 #include <string.h>
 #ifdef HAVE_STRINGS_H
 #include <strings.h>        // Needed for strcasecmp() on QNX6
-#endif                // #ifdef HAVE_STRINGS_H
+#endif // #ifdef HAVE_STRINGS_H
 
 #ifdef HAVE_GCRYPT_H
 
@@ -36,7 +36,7 @@
 // The version of libgcrypt that we need
 static const char * const MIN_GCRYPT_VERSION = "1.1.42";
 
-#endif                // #ifdef HAVE_GCRYPT_H
+#endif // #ifdef HAVE_GCRYPT_H
 
 static const char *gcrypt_version;
 
@@ -52,7 +52,7 @@ struct Library *xfdMasterBase;
 struct xfdMasterIFace *IxfdMaster;
 #else                 // #ifndef __MORPHOS__
 struct xfdMasterBase *xfdMasterBase;
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
 
 #endif // #if defined AMIGA || defined __MORPHOS__
 
@@ -71,7 +71,7 @@ libspectrum_error_function_t libspectrum_error_function = libspectrum_default_er
 #ifdef HAVE_GCRYPT_H
 static void
 gcrypt_log_handler(void *opaque, int level, const char *format, va_list ap);
-#endif                // #ifdef HAVE_GCRYPT_H
+#endif // #ifdef HAVE_GCRYPT_H
 
 // Initialise the library
 libspectrum_error libspectrum_init(void)
@@ -109,7 +109,7 @@ libspectrum_error libspectrum_init(void)
 
     gcrypt_version = NULL;
 
-#endif                // #ifdef HAVE_GCRYPT_H
+#endif // #ifdef HAVE_GCRYPT_H
 
     libspectrum_init_bits_set();
 
@@ -121,7 +121,7 @@ void libspectrum_end(void)
 #ifndef HAVE_LIB_GLIB
     libspectrum_slist_cleanup();
     libspectrum_hashtable_cleanup();
-#endif                // #ifndef HAVE_LIB_GLIB
+#endif // #ifndef HAVE_LIB_GLIB
 }
 
 #ifdef HAVE_GCRYPT_H
@@ -130,7 +130,7 @@ static void gcrypt_log_handler(void *opaque, int level, const char *format, va_l
 {
     // Do nothing
 }
-#endif                // #ifdef HAVE_GCRYPT_H
+#endif // #ifdef HAVE_GCRYPT_H
 
 int libspectrum_check_version(const char *version)
 {
@@ -146,10 +146,14 @@ int libspectrum_check_version(const char *version)
       &required_version[0], &required_version[1],
       &required_version[2], &required_version[3]);
 
-    for(i = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
 
-        if (actual_version[i] < required_version[i]) return 0;
-        if (actual_version[i] > required_version[i]) return 1;
+        if (actual_version[i] < required_version[i]) {
+            return 0;
+        }
+        if (actual_version[i] > required_version[i]) {
+            return 1;
+        }
 
     }
 
@@ -173,7 +177,9 @@ libspectrum_error libspectrum_print_error(libspectrum_error error, const char *f
     va_list ap;
 
     // If we don't have an error function, do nothing
-    if (!libspectrum_error_function) return LIBSPECTRUM_ERROR_NONE;
+    if (!libspectrum_error_function) {
+        return LIBSPECTRUM_ERROR_NONE;
+    }
 
     // Otherwise, call that error function
     va_start(ap, format);
@@ -446,16 +452,22 @@ libspectrum_identify_file_with_class(
     char *new_filename = NULL; unsigned char *new_buffer; size_t new_length;
 
     error = libspectrum_identify_file_raw(type, filename, buffer, length);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     error = libspectrum_identify_class(libspectrum_class, *type);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (*libspectrum_class != LIBSPECTRUM_CLASS_COMPRESSED)
         return LIBSPECTRUM_ERROR_NONE;
 
     error = libspectrum_uncompress_file(&new_buffer, &new_length, &new_filename, *type, buffer, length, filename);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     error = libspectrum_identify_file_with_class(type, libspectrum_class,
                         new_filename, new_buffer,
@@ -464,7 +476,9 @@ libspectrum_identify_file_with_class(
     // new_filename or buffer will be allocated in libspectrum_uncompress_file
     libspectrum_free(new_filename); libspectrum_free(new_buffer);
 
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     return LIBSPECTRUM_ERROR_NONE;
 }
@@ -573,7 +587,7 @@ libspectrum_error libspectrum_identify_file_raw(libspectrum_id_t *type, const ch
     best_guess = LIBSPECTRUM_ID_UNKNOWN; best_score = 0; duplicate_best = 0;
 
     // Compare against known extensions and signatures
-    for(ptr = types; ptr->type != -1; ptr++) {
+    for (ptr = types; ptr->type != -1; ptr++) {
 
         score = 0;
 
@@ -599,7 +613,7 @@ libspectrum_error libspectrum_identify_file_raw(libspectrum_id_t *type, const ch
     if (best_score <= 3) {
 #ifndef __MORPHOS__
         struct ExecIFace *IExec = (struct ExecIFace *)(*(struct ExecBase **)4)->MainInterface;
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
         struct xfdBufferInfo *xfdobj;
 
 #ifndef __MORPHOS__
@@ -609,7 +623,7 @@ libspectrum_error libspectrum_identify_file_raw(libspectrum_id_t *type, const ch
 #else                // #ifndef __MORPHOS__
         if (xfdMasterBase = OpenLibrary("xfdmaster.library",38)) {
                 if (xfdobj = (struct xfdBufferInfo *)xfdAllocObject(XFDOBJ_BUFFERINFO)) {
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
                     xfdobj->xfdbi_SourceBuffer = buffer;
                     xfdobj->xfdbi_SourceBufLen = length;
                     xfdobj->xfdbi_Flags = XFDFB_RECOGTARGETLEN | XFDFB_RECOGEXTERN;
@@ -618,15 +632,15 @@ libspectrum_error libspectrum_identify_file_raw(libspectrum_id_t *type, const ch
                     if (IxfdMaster->xfdRecogBuffer(xfdobj)) {
 #else                // #ifndef __MORPHOS__
                     if (xfdRecogBuffer(xfdobj)) {
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
                         best_guess = LIBSPECTRUM_ID_COMPRESSED_XFD;
-                        duplicate_best=0;
+                        duplicate_best = 0;
                     }
 #ifndef __MORPHOS__
                     IxfdMaster->xfdFreeObject((APTR)xfdobj);
 #else                // #ifndef __MORPHOS__
                     xfdFreeObject((APTR)xfdobj);
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
                 }
 #ifndef __MORPHOS__
                 IExec->DropInterface((struct Interface *)IxfdMaster);
@@ -634,7 +648,7 @@ libspectrum_error libspectrum_identify_file_raw(libspectrum_id_t *type, const ch
             IExec->CloseLibrary(xfdMasterBase);
 #else                // #ifndef __MORPHOS__
             CloseLibrary(xfdMasterBase);
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
         }
     }
 #endif // #ifdef AMIGA
@@ -749,7 +763,9 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
     libspectrum_error error;
 
     error = libspectrum_identify_class(&class, type);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (class != LIBSPECTRUM_CLASS_COMPRESSED) {
         libspectrum_print_error(LIBSPECTRUM_ERROR_LOGIC, "file type %d is not a compressed type", type);
@@ -795,7 +811,7 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
         if (new_filename) libspectrum_free(*new_filename);
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif                // #ifdef HAVE_LIBBZ2
+#endif // #ifdef HAVE_LIBBZ2
 
         break;
 
@@ -822,7 +838,7 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
         if (new_filename) libspectrum_free(*new_filename);
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif                // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
         break;
 
@@ -848,7 +864,7 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
         if (new_filename) libspectrum_free(*new_filename);
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif                // #ifdef HAVE_ZLIB_H
+#endif // #ifdef HAVE_ZLIB_H
 
         break;
 
@@ -857,7 +873,7 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
         {
 #ifndef __MORPHOS__
             struct ExecIFace *IExec = (struct ExecIFace *)(*(struct ExecBase **)4)->MainInterface;
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
             struct xfdBufferInfo *xfdobj;
 
 #ifndef __MORPHOS__
@@ -867,7 +883,7 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
 #else                // #ifndef __MORPHOS__
             if (xfdMasterBase = OpenLibrary("xfdmaster.library", 38)) {
                     if (xfdobj = (struct xfdBufferInfo *)xfdAllocObject(XFDOBJ_BUFFERINFO)) {
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
                         xfdobj->xfdbi_SourceBufLen = old_length;
                         xfdobj->xfdbi_SourceBuffer = old_buffer;
                         xfdobj->xfdbi_Flags = XFDFB_RECOGEXTERN | XFDFB_RECOGTARGETLEN;
@@ -876,13 +892,13 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
                         if (IxfdMaster->xfdRecogBuffer(xfdobj)) {
 #else                // #ifndef __MORPHOS__
                         if (xfdRecogBuffer(xfdobj)) {
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
                             xfdobj->xfdbi_TargetBufMemType = MEMF_ANY;
 #ifndef __MORPHOS__
                             if (IxfdMaster->xfdDecrunchBuffer(xfdobj)) {
 #else                // #ifndef __MORPHOS__
                             if (xfdDecrunchBuffer(xfdobj)) {
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
                                 *new_buffer = libspectrum_new(char, xfdobj->xfdbi_TargetBufSaveLen);
                                 *new_length = xfdobj->xfdbi_TargetBufSaveLen;
                                 memcpy(*new_buffer, xfdobj->xfdbi_TargetBuffer, *new_length);
@@ -890,7 +906,7 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
                                 IExec->FreeMem(xfdobj->xfdbi_TargetBuffer,xfdobj->xfdbi_TargetBufLen);
 #else                // #ifndef __MORPHOS__
                                 FreeMem(xfdobj->xfdbi_TargetBuffer,xfdobj->xfdbi_TargetBufLen);
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
                             } else {
                                 libspectrum_print_error(
                                                           LIBSPECTRUM_ERROR_UNKNOWN,
@@ -908,7 +924,7 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
                         IxfdMaster->xfdFreeObject(xfdobj);
 #else                // #ifndef __MORPHOS__
                         xfdFreeObject(xfdobj);
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
                     }
 #ifndef __MORPHOS__
                     IExec->DropInterface((struct Interface *)IxfdMaster);
@@ -916,7 +932,7 @@ libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
                 IExec->CloseLibrary(xfdMasterBase);
 #else                // #ifndef __MORPHOS__
                 CloseLibrary(xfdMasterBase);
-#endif                // #ifndef __MORPHOS__
+#endif // #ifndef __MORPHOS__
             }
         }
         break;

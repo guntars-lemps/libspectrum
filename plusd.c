@@ -47,15 +47,21 @@ libspectrum_error libspectrum_plusd_read(libspectrum_snap *snap, const libspectr
     int error;
 
     error = identify_machine(buffer_length, snap);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     error = libspectrum_plusd_read_header(buffer, buffer_length, snap);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     buffer += PLUSD_HEADER_LENGTH;
 
     error = libspectrum_plusd_read_data(buffer, snap);
-    if (error != LIBSPECTRUM_ERROR_NONE) return error;
+    if (error != LIBSPECTRUM_ERROR_NONE) {
+        return error;
+    }
 
     return LIBSPECTRUM_ERROR_NONE;
 }
@@ -83,19 +89,19 @@ static libspectrum_error libspectrum_plusd_read_header(const libspectrum_byte *b
 {
     libspectrum_byte i;
 
-    libspectrum_snap_set_iy (snap, buffer[0] + buffer[1] * 0x100);
-    libspectrum_snap_set_ix (snap, buffer[2] + buffer[3] * 0x100);
+    libspectrum_snap_set_iy(snap, buffer[0] + buffer[1] * 0x100);
+    libspectrum_snap_set_ix(snap, buffer[2] + buffer[3] * 0x100);
     libspectrum_snap_set_de_(snap, buffer[4] + buffer[5] * 0x100);
     libspectrum_snap_set_bc_(snap, buffer[6] + buffer[7] * 0x100);
     libspectrum_snap_set_hl_(snap, buffer[8] + buffer[9] * 0x100);
-    libspectrum_snap_set_f_ (snap, buffer[10]);
-    libspectrum_snap_set_a_ (snap, buffer[11]);
-    libspectrum_snap_set_de (snap, buffer[12] + buffer[13] * 0x100);
-    libspectrum_snap_set_bc (snap, buffer[14] + buffer[15] * 0x100);
-    libspectrum_snap_set_hl (snap, buffer[16] + buffer[17] * 0x100);
+    libspectrum_snap_set_f_(snap, buffer[10]);
+    libspectrum_snap_set_a_(snap, buffer[11]);
+    libspectrum_snap_set_de(snap, buffer[12] + buffer[13] * 0x100);
+    libspectrum_snap_set_bc(snap, buffer[14] + buffer[15] * 0x100);
+    libspectrum_snap_set_hl(snap, buffer[16] + buffer[17] * 0x100);
     // Header offset 18 is 'rubbish'
     i = buffer[19]; libspectrum_snap_set_i(snap, i);
-    libspectrum_snap_set_sp (snap, buffer[20] + buffer[21] * 0x100);
+    libspectrum_snap_set_sp(snap, buffer[20] + buffer[21] * 0x100);
 
     // Make a guess at the interrupt mode depending on what I was set to
     libspectrum_snap_set_im(snap, (i == 0 || i == 63) ? 1 : 2);
@@ -128,7 +134,9 @@ static libspectrum_error libspectrum_plusd_read_data(const libspectrum_byte *buf
 
         // Split the RAM into separate pages
         error = libspectrum_split_to_48k_pages(snap, buffer);
-        if (error != LIBSPECTRUM_ERROR_NONE) return error;
+        if (error != LIBSPECTRUM_ERROR_NONE) {
+            return error;
+        }
 
         break;
 
@@ -148,12 +156,12 @@ static libspectrum_error libspectrum_plusd_read_data(const libspectrum_byte *buf
 
     // R, IFF, AF and PC are stored on the stack
     iff = readbyte(snap, sp) & 0x04;
-    libspectrum_snap_set_r   (snap, readbyte(snap, sp + 1));
+    libspectrum_snap_set_r(snap, readbyte(snap, sp + 1));
     libspectrum_snap_set_iff1(snap, iff);
     libspectrum_snap_set_iff2(snap, iff);
-    libspectrum_snap_set_f   (snap, readbyte(snap, sp + 2));
-    libspectrum_snap_set_a   (snap, readbyte(snap, sp + 3));
-    libspectrum_snap_set_pc  (snap, readbyte(snap, sp + 4) +
+    libspectrum_snap_set_f(snap, readbyte(snap, sp + 2));
+    libspectrum_snap_set_a(snap, readbyte(snap, sp + 3));
+    libspectrum_snap_set_pc(snap, readbyte(snap, sp + 4) +
                    readbyte(snap, sp + 5) * 0x100);
 
     // Store SP + 6 to account for those unstacked values
@@ -194,7 +202,7 @@ static void libspectrum_plusd_read_128_data(libspectrum_snap *snap, const libspe
 {
     int i;
 
-    for(i=0; i<8; i++) {
+    for (i = 0; i < 8; i++) {
 
         libspectrum_byte *ram;
 

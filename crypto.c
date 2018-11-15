@@ -57,7 +57,9 @@ libspectrum_sign_data(libspectrum_byte **signature, size_t *signature_length,
     gcry_mpi_t r, s;
 
     error = get_signature(&r, &s, data, data_length, key);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     error = serialise_mpis(signature, signature_length, r, s);
     if (error) { gcry_mpi_release(r); gcry_mpi_release(s); return error; }
@@ -150,7 +152,7 @@ static libspectrum_error create_key(gcry_sexp_t *s_key, libspectrum_rzx_dsa_key 
     gcry_mpi_t mpis[MPI_COUNT];
     const char *format;
 
-    for(i=0; i<MPI_COUNT; i++) mpis[i] = NULL;
+    for (i = 0; i < MPI_COUNT; i++) mpis[i] = NULL;
 
         error = gcry_mpi_scan(&mpis[0], GCRYMPI_FMT_HEX, (unsigned char*)key->p,
                0, NULL);
@@ -207,7 +209,7 @@ static libspectrum_error create_key(gcry_sexp_t *s_key, libspectrum_rzx_dsa_key 
 static void free_mpis(gcry_mpi_t *mpis, size_t n)
 {
     size_t i;
-    for(i=0; i<n; i++) if (mpis[i]) gcry_mpi_release(mpis[i]);
+    for (i = 0; i < n; i++) if (mpis[i]) gcry_mpi_release(mpis[i]);
 }
 
 
@@ -289,7 +291,9 @@ libspectrum_error libspectrum_verify_signature(libspectrum_signature *signature,
     gcry_sexp_t hash, key_sexp, signature_sexp;
 
     error = get_hash(&hash, signature->start, signature->length);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     error = create_key(&key_sexp, key, 0);
     if (error) { gcry_sexp_release(hash); return error; }
@@ -334,4 +338,4 @@ libspectrum_error libspectrum_signature_free(libspectrum_signature *signature)
     return LIBSPECTRUM_ERROR_NONE;
 }
 
-#endif                // #ifdef HAVE_GCRYPT_H
+#endif // #ifdef HAVE_GCRYPT_H

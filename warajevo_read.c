@@ -58,7 +58,7 @@ typedef struct
     unsigned unused    : 3;
 } status_bits;
 
-#endif            // #ifdef WORDS_BIGENDIAN
+#endif // #ifdef WORDS_BIGENDIAN
 
 typedef union
 {
@@ -187,9 +187,11 @@ libspectrum_error internal_warajevo_read(libspectrum_tape *tape, const libspectr
     // Get inital offset
     offset = lsb2dword(ptr);
 
-    while(offset != warajevo_signature) {
+    while (offset != warajevo_signature) {
         error = get_next_block(&offset, ptr, end, tape);
-        if (error != LIBSPECTRUM_ERROR_NONE) return error;
+        if (error != LIBSPECTRUM_ERROR_NONE) {
+            return error;
+        }
     }
 
     return LIBSPECTRUM_ERROR_NONE;
@@ -245,7 +247,7 @@ exec_command(libspectrum_byte *dest, const libspectrum_byte *src,
 
     command_byte = src[(*pc)++];
 
-    for(i = 0; i < 8; i++) {
+    for (i = 0; i < 8; i++) {
         bit = (command_byte & (0x80 >> i)) ? 1 : 0;
 
         error = add_bit_to_copy_command(dest, src, dest + to_write, bit, sp, bytes_written);
@@ -296,8 +298,8 @@ add_bit_to_copy_command(libspectrum_byte *dest, const libspectrum_byte *src,
             break;
         case b0:
             if (bit == 0) { // b00
-                command.size=3;
-                command.mode=2;
+                command.size = 3;
+                command.mode = 2;
             } else
                 command.state = b01;
             break;
@@ -307,22 +309,22 @@ add_bit_to_copy_command(libspectrum_byte *dest, const libspectrum_byte *src,
         case b01:
             if (bit == 0) { // b010
                 // no higher byte
-                command.size=2;
-                command.mode=3;
+                command.size = 2;
+                command.mode = 3;
                 command.offset = src[(*sp)++];
                 return execute_copy_command(dest, end, bytes_written);
             } else { // b011
-                command.size=10 + src[(*sp)++];
-                command.mode=2;
+                command.size = 10 + src[(*sp)++];
+                command.mode = 2;
             }
             break;
         case b10:
             if (bit == 0) { // b100
-                command.size=4;
-                command.mode=2;
+                command.size = 4;
+                command.mode = 2;
             } else { // b101
-                command.size=5;
-                command.mode=2;
+                command.size = 5;
+                command.mode = 2;
             }
             break;
         case b11:
@@ -330,20 +332,20 @@ add_bit_to_copy_command(libspectrum_byte *dest, const libspectrum_byte *src,
             break;
         case b110:
             if (bit == 0) { // b1100
-                command.size=6;
-                command.mode=2;
+                command.size = 6;
+                command.mode = 2;
             } else { // b1101
-                command.size=7;
-                command.mode=2;
+                command.size = 7;
+                command.mode = 2;
             }
             break;
         case b111:
             if (bit == 0) { // b1110
-                command.size=8;
-                command.mode=2;
+                command.size = 8;
+                command.mode = 2;
             } else { // b1111
-                command.size=9;
-                command.mode=2;
+                command.size = 9;
+                command.mode = 2;
             }
             break;
         }
@@ -358,7 +360,7 @@ add_bit_to_copy_command(libspectrum_byte *dest, const libspectrum_byte *src,
                 command.vstate = v0;
             else { // v1
                 // no higher byte
-                command.mode=3;
+                command.mode = 3;
             }
             break;
         case v0:
@@ -369,7 +371,7 @@ add_bit_to_copy_command(libspectrum_byte *dest, const libspectrum_byte *src,
             command.pattern |= bit;
             if (++command.pattern_depth == 4) {
                 command.offset += (command.pattern + 7) << 8;
-                command.mode=3;
+                command.mode = 3;
             }
             break;
         case v00:
@@ -378,10 +380,10 @@ add_bit_to_copy_command(libspectrum_byte *dest, const libspectrum_byte *src,
         case v000:
             if (bit == 0) { // v0000
                 command.offset += 1 << 8;
-                command.mode=3;
+                command.mode = 3;
             } else { // v0001
                 command.offset += 2 << 8;
-                command.mode=3;
+                command.mode = 3;
             }
             break;
         case v001:
@@ -390,19 +392,19 @@ add_bit_to_copy_command(libspectrum_byte *dest, const libspectrum_byte *src,
         case v0010:
             if (bit == 0) { // v00100
                 command.offset += 3 << 8;
-                command.mode=3;
+                command.mode = 3;
             } else { // v00101
                 command.offset += 4 << 8;
-                command.mode=3;
+                command.mode = 3;
             }
             break;
         case v0011:
             if (bit == 0) { // v00110
                 command.offset += 5 << 8;
-                command.mode=3;
+                command.mode = 3;
             } else { // v00111
                 command.offset += 6 << 8;
-                command.mode=3;
+                command.mode = 3;
             }
             break;
         }
@@ -474,7 +476,7 @@ static libspectrum_error read_rom_block(libspectrum_tape *tape, const libspectru
 
     // Calculate checksum
     block_data[length - 1] = 0;
-    for(i = 0; i < length - 1; i++)
+    for (i = 0; i < length - 1; i++)
         block_data[length - 1] ^= block_data[i];
 
     // Give a 1s pause after each block
@@ -605,9 +607,11 @@ decompress_block(libspectrum_byte *dest, const libspectrum_byte *src,
 
     reset_copy_command();
 
-    while((pc <= signature) && (bytes_written != length)) {
+    while ((pc <= signature) && (bytes_written != length)) {
         error = exec_command(dest, src, end, &sp, &pc, &bytes_written, length);
-        if (error) return error;
+        if (error) {
+            return error;
+        }
     }
 
     return LIBSPECTRUM_ERROR_NONE;

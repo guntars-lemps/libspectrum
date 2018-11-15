@@ -176,4 +176,4 @@ libspectrum_zip_close(struct libspectrum_zip *zip) ;
 unsigned int
 libspectrum_zip_num_entries(struct libspectrum_zip *zip);
 
-#endif                // #ifndef LIBSPECTRUM_ZIP_H
+#endif // #ifndef LIBSPECTRUM_ZIP_H

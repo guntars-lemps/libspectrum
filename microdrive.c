@@ -213,14 +213,14 @@ LSTCHK   LD      E,A             ; update the 8-bit sum.
     }
 
     checksum = 0;            // Block header
-    for(i = LIBSPECTRUM_MICRODRIVE_HEAD_LEN; i > 1; i--) {
+    for (i = LIBSPECTRUM_MICRODRIVE_HEAD_LEN; i > 1; i--) {
         DO_CHECK;
     }
     if (*(data++) != checksum)
         return 1;
 
     checksum = 0;            // Record header
-    for(i = LIBSPECTRUM_MICRODRIVE_HEAD_LEN; i > 1; i--) {
+    for (i = LIBSPECTRUM_MICRODRIVE_HEAD_LEN; i > 1; i--) {
         DO_CHECK;
     }
     if (*(data++) != checksum)
@@ -231,7 +231,7 @@ LSTCHK   LD      E,A             ; update the 8-bit sum.
     }
 
     checksum = 0;            // Data
-    for(i = LIBSPECTRUM_MICRODRIVE_DATA_LEN; i > 0; i--) {
+    for (i = LIBSPECTRUM_MICRODRIVE_DATA_LEN; i > 0; i--) {
         DO_CHECK;
     }
     if (*data != checksum)

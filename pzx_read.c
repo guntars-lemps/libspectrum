@@ -159,11 +159,11 @@ read_pzxt_block(libspectrum_tape *tape, const libspectrum_byte **buffer,
         }
     }
 
-    while(*buffer < block_end) {
+    while (*buffer < block_end) {
         error = pzx_read_string(buffer, block_end, &info_tag);
         if (error) {
             size_t j;
-            for(j = 0; j < i; j++) libspectrum_free(strings[j]);
+            for (j = 0; j < i; j++) libspectrum_free(strings[j]);
             libspectrum_free(strings); libspectrum_free(ids);
             return error;
         }
@@ -175,7 +175,7 @@ read_pzxt_block(libspectrum_tape *tape, const libspectrum_byte **buffer,
         error = pzx_read_string(buffer, block_end, &string);
         if (error) {
             size_t j;
-            for(j = 0; j < i; j++) libspectrum_free(strings[j]);
+            for (j = 0; j < i; j++) libspectrum_free(strings[j]);
             libspectrum_free(strings); libspectrum_free(ids);
             return error;
         }
@@ -267,7 +267,9 @@ read_data_block(libspectrum_tape *tape, const libspectrum_byte **buffer,
     error = pzx_read_data(buffer, block_end,
                                                   p0_count * sizeof(libspectrum_word),
                                                   (libspectrum_byte**)&p0_pulses);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     error = pzx_read_data(buffer, block_end,
                                                   p1_count * sizeof(libspectrum_word),
@@ -343,7 +345,7 @@ read_puls_block(libspectrum_tape *tape, const libspectrum_byte **buffer,
     libspectrum_dword *lengths_buffer = libspectrum_new(libspectrum_dword, buffer_sizes);
     const libspectrum_byte *block_end = *buffer + data_length;
 
-    while((block_end - (*buffer)) > (ptrdiff_t)0) {
+    while ((block_end - (*buffer)) > (ptrdiff_t)0) {
         error = read_next_pulse(buffer, block_end, &pulse_repeats, &length);
         if (error) {
             libspectrum_free(pulse_repeats_buffer);
@@ -520,7 +522,9 @@ static libspectrum_error read_block(libspectrum_tape *tape, const libspectrum_by
     size_t i; int done;
 
     error = read_block_header(id, &data_length, buffer, end);
-    if (error) return error;
+    if (error) {
+        return error;
+    }
 
     if (end - *buffer < data_length) {
         libspectrum_print_error(
@@ -532,11 +536,13 @@ static libspectrum_error read_block(libspectrum_tape *tape, const libspectrum_by
 
     done = 0;
 
-    for(i = 0; !done && i < ARRAY_SIZE(read_blocks); i++) {
+    for (i = 0; !done && i < ARRAY_SIZE(read_blocks); i++) {
 
         if (!memcmp(id, read_blocks[i].id, 4)) {
             error = read_blocks[i].function(tape, buffer, end, data_length, ctx);
-            if (error) return error;
+            if (error) {
+                return error;
+            }
             done = 1;
         }
 
@@ -578,7 +584,7 @@ libspectrum_error internal_pzx_read(libspectrum_tape *tape, const libspectrum_by
     ctx = libspectrum_new(pzx_context, 1);
     ctx->version = 0;
 
-    while(buffer < end) {
+    while (buffer < end) {
         error = read_block(tape, &buffer, end, ctx);
         if (error) {
             libspectrum_free(ctx);
@@ -620,7 +626,7 @@ static libspectrum_error pzx_read_string(const libspectrum_byte **ptr, const lib
     size_t buffer_size = 64;
     char *buffer = libspectrum_new(char, buffer_size);
 
-    while(**ptr != '\0' && *ptr < end) {
+    while (**ptr != '\0' && *ptr < end) {
         if (length == buffer_size) {
             buffer_size *= 2;
             buffer = libspectrum_renew(char, buffer, buffer_size);
@@ -639,7 +645,7 @@ static libspectrum_error pzx_read_string(const libspectrum_byte **ptr, const lib
     (*dest)[length] = '\0';
 
     // Translate line endings
-    for(ptr2 = (*dest); *ptr2; ptr2++) if (*ptr2 == '\r') *ptr2 = '\n';
+    for (ptr2 = (*dest); *ptr2; ptr2++) if (*ptr2 == '\r') *ptr2 = '\n';
 
     libspectrum_free(buffer);
 
