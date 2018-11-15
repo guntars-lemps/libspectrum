@@ -31,10 +31,10 @@
 #include "internals.h"
 
 static
-gint    first_function        (gconstpointer     a,                 gconstpointer     b);
+gint    first_function        (gconstpointer     a, gconstpointer     b);
 
 static
-gint    last_function        (gconstpointer     a,                 gconstpointer     b);
+gint    last_function        (gconstpointer     a, gconstpointer     b);
 
 static int FREE_LIST_ALLOCATE_CHUNK = 1024;
 
@@ -45,18 +45,18 @@ GSList * allocated_list = NULL;
 
 static atomic_char atomic_locker = ATOMIC_VAR_INIT(0);
 
-#define lock() atomic_lock( &atomic_locker )
-#define unlock() atomic_unlock( &atomic_locker )
+#define lock() atomic_lock(&atomic_locker)
+#define unlock() atomic_unlock(&atomic_locker)
 
-#else                /* #ifdef HAVE_STDATOMIC_H */
+#else                // #ifdef HAVE_STDATOMIC_H
 
 #define lock()
 #define unlock()
 
-#endif                /* #ifdef HAVE_STDATOMIC_H */
+#endif                // #ifdef HAVE_STDATOMIC_H
 
 static
-void    allocate_free   ( void ) {
+void    allocate_free   (void) {
         lock();
         if(!free_list) {
                 int i;
@@ -179,29 +179,29 @@ GSList* g_slist_insert_sorted    (GSList        *list,
         }
 }
 
-GSList* g_slist_append        (GSList        *list,                 gpointer     data) {
+GSList* g_slist_append        (GSList        *list, gpointer     data) {
 
     return g_slist_insert_sorted(list, data, last_function);
 }
 
-GSList* g_slist_prepend        (GSList        *list,                 gpointer     data) {
+GSList* g_slist_prepend        (GSList        *list, gpointer     data) {
 
     return g_slist_insert_sorted(list, data, first_function);
 }
 
 static
-gint    first_function        (gconstpointer     a,                 gconstpointer     b) {
+gint    first_function        (gconstpointer     a, gconstpointer     b) {
 
     return -1;
 }
 
 static
-gint    last_function        (gconstpointer     a,                 gconstpointer     b) {
+gint    last_function        (gconstpointer     a, gconstpointer     b) {
 
     return 1;
 }
 
-GSList* g_slist_remove        (GSList        *list,                 gconstpointer     data) {
+GSList* g_slist_remove        (GSList        *list, gconstpointer     data) {
 
     GSList *tmp;
     GSList *prev;
@@ -231,7 +231,7 @@ GSList* g_slist_remove        (GSList        *list,                 gconstpointe
     return list;
 }
 
-GSList* g_slist_delete_link    (GSList        *list,                 GSList        *link) {
+GSList* g_slist_delete_link    (GSList        *list, GSList        *link) {
 
     GSList *tmp;
     GSList *prev;
@@ -301,7 +301,7 @@ void    g_slist_free        (GSList        *list) {
         {
             GSList *last_node = list;
 
-            while( last_node->next )
+            while(last_node->next)
     last_node = last_node->next;
 
             lock();
@@ -328,9 +328,9 @@ GSList* g_slist_reverse (GSList *list)
     return prev;
 }
 
-GSList* g_slist_nth        (GSList        *list,                 guint        n) {
-    for( ; n; n-- ) {
-        if (list == NULL ) return NULL;
+GSList* g_slist_nth        (GSList        *list, guint        n) {
+    for(; n; n--) {
+        if (list == NULL) return NULL;
         list = list->next;
     }
 
@@ -339,7 +339,7 @@ GSList* g_slist_nth        (GSList        *list,                 guint        n)
 
 GSList* g_slist_find_custom    (GSList        *list,
                  gconstpointer    data,
-                 GCompareFunc    func ) {
+                 GCompareFunc    func) {
     while (list)
         {
             if (!(*func) (list->data, data)) return list;
@@ -349,13 +349,13 @@ GSList* g_slist_find_custom    (GSList        *list,
     return NULL;
 }
 
-gint    g_slist_position    (GSList        *list,                 GSList        *llink) {
+gint    g_slist_position    (GSList        *list, GSList        *llink) {
     int n;
 
     n = 0;
 
-    while( list ) {
-        if (list == llink ) return n;
+    while(list) {
+        if (list == llink) return n;
         list = list->next;
         n++;
     }
@@ -363,13 +363,13 @@ gint    g_slist_position    (GSList        *list,                 GSList        
     return -1;
 }
 
-void libspectrum_slist_cleanup( void )
+void libspectrum_slist_cleanup(void)
 {
     lock();
-    libspectrum_free( allocated_list );
+    libspectrum_free(allocated_list);
     allocated_list = NULL;
     free_list = NULL;
     unlock();
 }
 
-#endif                /* #ifndef HAVE_LIB_GLIB */
+#endif                // #ifndef HAVE_LIB_GLIB

@@ -26,35 +26,35 @@
 
 #include "tape_block.h"
 
-libspectrum_dword libspectrum_tape_generalised_data_symbol_table_symbols_in_block( const libspectrum_tape_generalised_data_symbol_table *table )
+libspectrum_dword libspectrum_tape_generalised_data_symbol_table_symbols_in_block(const libspectrum_tape_generalised_data_symbol_table *table)
 {
     return table->symbols_in_block;
 }
 
-libspectrum_byte libspectrum_tape_generalised_data_symbol_table_max_pulses( const libspectrum_tape_generalised_data_symbol_table *table )
+libspectrum_byte libspectrum_tape_generalised_data_symbol_table_max_pulses(const libspectrum_tape_generalised_data_symbol_table *table)
 {
     return table->max_pulses;
 }
 
-libspectrum_word libspectrum_tape_generalised_data_symbol_table_symbols_in_table( const libspectrum_tape_generalised_data_symbol_table *table )
+libspectrum_word libspectrum_tape_generalised_data_symbol_table_symbols_in_table(const libspectrum_tape_generalised_data_symbol_table *table)
 {
     return table->symbols_in_table;
 }
 
 libspectrum_tape_generalised_data_symbol*
-libspectrum_tape_generalised_data_symbol_table_symbol( const libspectrum_tape_generalised_data_symbol_table *table, size_t which )
+libspectrum_tape_generalised_data_symbol_table_symbol(const libspectrum_tape_generalised_data_symbol_table *table, size_t which)
 {
-    return &table->symbols[ which ];
+    return &table->symbols[which];
 }
 
-libspectrum_tape_generalised_data_symbol_edge_type libspectrum_tape_generalised_data_symbol_type( const libspectrum_tape_generalised_data_symbol *symbol )
+libspectrum_tape_generalised_data_symbol_edge_type libspectrum_tape_generalised_data_symbol_type(const libspectrum_tape_generalised_data_symbol *symbol)
 {
     return symbol->edge_type;
 }
 
-libspectrum_word
-libspectrum_tape_generalised_data_symbol_pulse( const libspectrum_tape_generalised_data_symbol *symbol, size_t which )
+
+libspectrum_word libspectrum_tape_generalised_data_symbol_pulse(const libspectrum_tape_generalised_data_symbol *symbol, size_t which)
 {
-    return symbol->lengths[ which ];
+    return symbol->lengths[which];
 }
 

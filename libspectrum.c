@@ -26,17 +26,17 @@
 #include <stdio.h>
 #include <string.h>
 #ifdef HAVE_STRINGS_H
-#include <strings.h>        /* Needed for strcasecmp() on QNX6 */
-#endif                /* #ifdef HAVE_STRINGS_H */
+#include <strings.h>        // Needed for strcasecmp() on QNX6
+#endif                // #ifdef HAVE_STRINGS_H
 
 #ifdef HAVE_GCRYPT_H
 
 #include <gcrypt.h>
 
-/* The version of libgcrypt that we need */
+// The version of libgcrypt that we need
 static const char * const MIN_GCRYPT_VERSION = "1.1.42";
 
-#endif                /* #ifdef HAVE_GCRYPT_H */
+#endif                // #ifdef HAVE_GCRYPT_H
 
 static const char *gcrypt_version;
 
@@ -50,156 +50,156 @@ static const char *gcrypt_version;
 struct Library *xfdMasterBase;
 
 struct xfdMasterIFace *IxfdMaster;
-#else                 /* #ifndef __MORPHOS__ */
+#else                 // #ifndef __MORPHOS__
 struct xfdMasterBase *xfdMasterBase;
-#endif                /* #ifndef __MORPHOS__ */
+#endif                // #ifndef __MORPHOS__
 
-#endif /* #if defined AMIGA || defined __MORPHOS__ */
+#endif // #if defined AMIGA || defined __MORPHOS__
 
-/* The various real devices that can be attached to a virtual joystick */
+// The various real devices that can be attached to a virtual joystick
 const int LIBSPECTRUM_JOYSTICK_INPUT_NONE             = 0;
 const int LIBSPECTRUM_JOYSTICK_INPUT_KEYBOARD         = 1 << 0;
 const int LIBSPECTRUM_JOYSTICK_INPUT_JOYSTICK_1       = 1 << 1;
 const int LIBSPECTRUM_JOYSTICK_INPUT_JOYSTICK_2       = 1 << 2;
 
 libspectrum_error
-libspectrum_default_error_function( libspectrum_error error,                    const char *format, va_list ap );
+libspectrum_default_error_function(libspectrum_error error, const char *format, va_list ap);
 
-/* The function to call on errors */
+// The function to call on errors
 libspectrum_error_function_t libspectrum_error_function = libspectrum_default_error_function;
 
 #ifdef HAVE_GCRYPT_H
 static void
-gcrypt_log_handler( void *opaque, int level, const char *format, va_list ap );
-#endif                /* #ifdef HAVE_GCRYPT_H */
+gcrypt_log_handler(void *opaque, int level, const char *format, va_list ap);
+#endif                // #ifdef HAVE_GCRYPT_H
 
-/* Initialise the library */
-libspectrum_error libspectrum_init( void )
+// Initialise the library
+libspectrum_error libspectrum_init(void)
 {
 #ifdef HAVE_GCRYPT_H
 
-    if (!gcry_control( GCRYCTL_ANY_INITIALIZATION_P ) ) {
+    if (!gcry_control(GCRYCTL_ANY_INITIALIZATION_P)) {
 
-        gcrypt_version = gcry_check_version( MIN_GCRYPT_VERSION );
-        if (!gcrypt_version ) {
+        gcrypt_version = gcry_check_version(MIN_GCRYPT_VERSION);
+        if (!gcrypt_version) {
             libspectrum_print_error(
                 LIBSPECTRUM_ERROR_LOGIC,
     "libspectrum_init: found libgcrypt %s, but need %s",
-    gcry_check_version( NULL ), MIN_GCRYPT_VERSION
-            );
-            return LIBSPECTRUM_ERROR_LOGIC;    /* FIXME: better error code */
+    gcry_check_version(NULL), MIN_GCRYPT_VERSION
+);
+            return LIBSPECTRUM_ERROR_LOGIC;    // FIXME: better error code
         }
 
         /* Ugly hack to prevent the 'Secure memory is not locked into
               core' message appearing */
-        gcry_set_log_handler( gcrypt_log_handler, NULL );
+        gcry_set_log_handler(gcrypt_log_handler, NULL);
 
         /* Initialise the 'secure' memory (which probably won't actually
               be scure, but that doesn't matter as libspectrum's 'security'
               is bogus anyway) */
-        gcry_control( GCRYCTL_INIT_SECMEM, 16384 );
+        gcry_control(GCRYCTL_INIT_SECMEM, 16384);
 
-        /* Restore the default log handler */
-        gcry_set_log_handler( NULL, NULL );
+        // Restore the default log handler
+        gcry_set_log_handler(NULL, NULL);
 
-        gcry_control( GCRYCTL_INITIALIZATION_FINISHED );
+        gcry_control(GCRYCTL_INITIALIZATION_FINISHED);
     }
 
-#else                /* #ifdef HAVE_GCRYPT_H */
+#else                // #ifdef HAVE_GCRYPT_H
 
     gcrypt_version = NULL;
 
-#endif                /* #ifdef HAVE_GCRYPT_H */
+#endif                // #ifdef HAVE_GCRYPT_H
 
     libspectrum_init_bits_set();
 
     return LIBSPECTRUM_ERROR_NONE;
 }
 
-void libspectrum_end( void )
+void libspectrum_end(void)
 {
 #ifndef HAVE_LIB_GLIB
     libspectrum_slist_cleanup();
     libspectrum_hashtable_cleanup();
-#endif                /* #ifndef HAVE_LIB_GLIB */
+#endif                // #ifndef HAVE_LIB_GLIB
 }
 
 #ifdef HAVE_GCRYPT_H
-static void
-gcrypt_log_handler( void *opaque, int level, const char *format, va_list ap )
-{
-    /* Do nothing */
-}
-#endif                /* #ifdef HAVE_GCRYPT_H */
 
-int libspectrum_check_version( const char *version )
+static void gcrypt_log_handler(void *opaque, int level, const char *format, va_list ap)
+{
+    // Do nothing
+}
+#endif                // #ifdef HAVE_GCRYPT_H
+
+int libspectrum_check_version(const char *version)
 {
     size_t i;
 
     int actual_version[4]   = { 0, 0, 0, 0 },
             required_version[4] = { 0, 0, 0, 0 };
 
-    sscanf( VERSION, "%d.%d.%d.%d",
+    sscanf(VERSION, "%d.%d.%d.%d",
       &actual_version[0], &actual_version[1],
-      &actual_version[2], &actual_version[3] );
-    sscanf( version, "%d.%d.%d.%d",
+      &actual_version[2], &actual_version[3]);
+    sscanf(version, "%d.%d.%d.%d",
       &required_version[0], &required_version[1],
-      &required_version[2], &required_version[3] );
+      &required_version[2], &required_version[3]);
 
-    for( i = 0; i < 4; i++ ) {
+    for(i = 0; i < 4; i++) {
 
-        if (actual_version[i] < required_version[i] ) return 0;
-        if (actual_version[i] > required_version[i] ) return 1;
+        if (actual_version[i] < required_version[i]) return 0;
+        if (actual_version[i] > required_version[i]) return 1;
 
     }
 
-    /* All version numbers exactly equal, so return OK */
+    // All version numbers exactly equal, so return OK
     return 1;
 }
 
-const char * libspectrum_version( void )
+const char * libspectrum_version(void)
 {
     return VERSION;
 }
 
-const char * libspectrum_gcrypt_version( void )
+const char * libspectrum_gcrypt_version(void)
 {
     return gcrypt_version;
 }
 
-libspectrum_error
-libspectrum_print_error( libspectrum_error error, const char *format, ... )
+
+libspectrum_error libspectrum_print_error(libspectrum_error error, const char *format, ...)
 {
     va_list ap;
 
-    /* If we don't have an error function, do nothing */
-    if (!libspectrum_error_function ) return LIBSPECTRUM_ERROR_NONE;
+    // If we don't have an error function, do nothing
+    if (!libspectrum_error_function) return LIBSPECTRUM_ERROR_NONE;
 
-    /* Otherwise, call that error function */
-    va_start( ap, format );
-    libspectrum_error_function( error, format, ap );
-    va_end( ap );
-
-    return LIBSPECTRUM_ERROR_NONE;
-}
-
-/* Default error action is just to print a message to stderr */
-libspectrum_error
-libspectrum_default_error_function( libspectrum_error error,                    const char *format, va_list ap )
-{
-      fprintf( stderr, "libspectrum error: " );
-    vfprintf( stderr, format, ap );
-      fprintf( stderr, "\n" );
-
-    if (error == LIBSPECTRUM_ERROR_LOGIC ) abort();
+    // Otherwise, call that error function
+    va_start(ap, format);
+    libspectrum_error_function(error, format, ap);
+    va_end(ap);
 
     return LIBSPECTRUM_ERROR_NONE;
 }
 
-/* Get the name of a specific joystick type */
-const char * libspectrum_joystick_name( libspectrum_joystick type )
+// Default error action is just to print a message to stderr
+
+libspectrum_error libspectrum_default_error_function(libspectrum_error error, const char *format, va_list ap)
 {
-    switch( type ) {
+      fprintf(stderr, "libspectrum error: ");
+    vfprintf(stderr, format, ap);
+      fprintf(stderr, "\n");
+
+    if (error == LIBSPECTRUM_ERROR_LOGIC) abort();
+
+    return LIBSPECTRUM_ERROR_NONE;
+}
+
+// Get the name of a specific joystick type
+const char * libspectrum_joystick_name(libspectrum_joystick type)
+{
+    switch(type) {
     case LIBSPECTRUM_JOYSTICK_CURSOR:     return "Cursor";
     case LIBSPECTRUM_JOYSTICK_KEMPSTON:   return "Kempston";
     case LIBSPECTRUM_JOYSTICK_SINCLAIR_1: return "Sinclair 1";
@@ -214,10 +214,10 @@ const char * libspectrum_joystick_name( libspectrum_joystick type )
     return "(unknown type)";
 }
 
-/* Get the name of a specific machine type */
-const char * libspectrum_machine_name( libspectrum_machine type )
+// Get the name of a specific machine type
+const char * libspectrum_machine_name(libspectrum_machine type)
 {
-    switch( type ) {
+    switch(type) {
     case LIBSPECTRUM_MACHINE_16:       return "Spectrum 16K";
     case LIBSPECTRUM_MACHINE_48:       return "Spectrum 48K";
     case LIBSPECTRUM_MACHINE_48_NTSC:  return "Spectrum 48K (NTSC)";
@@ -242,46 +242,46 @@ const char * libspectrum_machine_name( libspectrum_machine type )
     return "(unknown type)";
 }
 
-/* The various capabilities of the different machines */
-const int LIBSPECTRUM_MACHINE_CAPABILITY_AY           = 1 << 0; /* AY-3-8192 */
+// The various capabilities of the different machines
+const int LIBSPECTRUM_MACHINE_CAPABILITY_AY           = 1 << 0; // AY-3-8192
 const int LIBSPECTRUM_MACHINE_CAPABILITY_128_MEMORY   = 1 << 1;
-                                                                                                    /* 128-style memory paging */
+                                                                                                    // 128-style memory paging
 const int LIBSPECTRUM_MACHINE_CAPABILITY_PLUS3_MEMORY = 1 << 2;
-                                                                                                      /* +3-style memory paging */
+                                                                                                      // +3-style memory paging
 const int LIBSPECTRUM_MACHINE_CAPABILITY_PLUS3_DISK   = 1 << 3;
-                                                                                                            /* +3-style disk drive */
+                                                                                                            // +3-style disk drive
 const int LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_MEMORY = 1 << 4;
-                                                                                        /* TC20[46]8-style memory paging */
+                                                                                        // TC20[46]8-style memory paging
 const int LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_VIDEO  = 1 << 5;
-                                                                                            /* TC20[46]8-style video modes */
+                                                                                            // TC20[46]8-style video modes
 const int LIBSPECTRUM_MACHINE_CAPABILITY_TRDOS_DISK   = 1 << 6;
-                                                                                                      /* TRDOS-style disk drive */
+                                                                                                      // TRDOS-style disk drive
 const int LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_DOCK   = 1 << 7;
-                                                                                      /* T[SC]2068-style cartridge port */
+                                                                                      // T[SC]2068-style cartridge port
 const int LIBSPECTRUM_MACHINE_CAPABILITY_SINCLAIR_JOYSTICK = 1 << 8;
-                                                                                        /* Sinclair-style joystick ports */
+                                                                                        // Sinclair-style joystick ports
 const int LIBSPECTRUM_MACHINE_CAPABILITY_KEMPSTON_JOYSTICK = 1 << 9;
-                                                                                        /* Kempston-style joystick ports */
+                                                                                        // Kempston-style joystick ports
 const int LIBSPECTRUM_MACHINE_CAPABILITY_SCORP_MEMORY = 1 << 10;
-                                                                                          /* Scorpion-style memory paging */
+                                                                                          // Scorpion-style memory paging
 const int LIBSPECTRUM_MACHINE_CAPABILITY_EVEN_M1 = 1 << 11;
-                                                          /* M1 cycles always start on even tstate counts */
+                                                          // M1 cycles always start on even tstate counts
 const int LIBSPECTRUM_MACHINE_CAPABILITY_SE_MEMORY = 1 << 12;
-                                                                                                      /* SE-style memory paging */
+                                                                                                      // SE-style memory paging
 const int LIBSPECTRUM_MACHINE_CAPABILITY_NTSC = 1 << 13;
-                                                                                                                          /* NTSC display */
+                                                                                                                          // NTSC display
 const int LIBSPECTRUM_MACHINE_CAPABILITY_PENT512_MEMORY = 1 << 14;
-                     /* Pentagon 512-style memory paging */
+                     // Pentagon 512-style memory paging
 const int LIBSPECTRUM_MACHINE_CAPABILITY_PENT1024_MEMORY = 1 << 15;
-                    /* Pentagon 1024-style memory paging */
+                    // Pentagon 1024-style memory paging
 
-/* Given a machine type, what features does it have? */
-int libspectrum_machine_capabilities( libspectrum_machine type )
+// Given a machine type, what features does it have?
+int libspectrum_machine_capabilities(libspectrum_machine type)
 {
     int capabilities = 0;
 
-    /* AY-3-8912 */
-    switch( type ) {
+    // AY-3-8912
+    switch(type) {
     case LIBSPECTRUM_MACHINE_128: case LIBSPECTRUM_MACHINE_PLUS2:
     case LIBSPECTRUM_MACHINE_PLUS2A: case LIBSPECTRUM_MACHINE_PLUS3:
     case LIBSPECTRUM_MACHINE_PLUS3E: case LIBSPECTRUM_MACHINE_128E:
@@ -295,23 +295,23 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
         break;
     }
 
-    /* 128K Spectrum-style 0x7ffd memory paging */
-    switch( type ) {
+    // 128K Spectrum-style 0x7ffd memory paging
+    switch(type) {
     case LIBSPECTRUM_MACHINE_128: case LIBSPECTRUM_MACHINE_PLUS2:
     case LIBSPECTRUM_MACHINE_PLUS2A: case LIBSPECTRUM_MACHINE_PLUS3:
     case LIBSPECTRUM_MACHINE_PLUS3E: case LIBSPECTRUM_MACHINE_128E:
     case LIBSPECTRUM_MACHINE_PENT:
     case LIBSPECTRUM_MACHINE_PENT512: case LIBSPECTRUM_MACHINE_PENT1024:
     case LIBSPECTRUM_MACHINE_SCORP:
-/* FIXME: SE needs to have this capability to be considered a 128k machine */
+// FIXME: SE needs to have this capability to be considered a 128k machine
     case LIBSPECTRUM_MACHINE_SE:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_128_MEMORY; break;
     default:
         break;
     }
 
-    /* +3 Spectrum-style 0x1ffd memory paging */
-    switch( type ) {
+    // +3 Spectrum-style 0x1ffd memory paging
+    switch(type) {
     case LIBSPECTRUM_MACHINE_PLUS2A: case LIBSPECTRUM_MACHINE_PLUS3:
     case LIBSPECTRUM_MACHINE_PLUS3E: case LIBSPECTRUM_MACHINE_128E:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_PLUS3_MEMORY; break;
@@ -319,16 +319,16 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
         break;
     }
 
-    /* +3 Spectrum-style disk */
-    switch( type ) {
+    // +3 Spectrum-style disk
+    switch(type) {
     case LIBSPECTRUM_MACHINE_PLUS3: case LIBSPECTRUM_MACHINE_PLUS3E:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_PLUS3_DISK; break;
     default:
         break;
     }
 
-    /* T[CS]20[46]8-style 0x00fd memory paging */
-    switch( type ) {
+    // T[CS]20[46]8-style 0x00fd memory paging
+    switch(type) {
     case LIBSPECTRUM_MACHINE_TC2048: case LIBSPECTRUM_MACHINE_TC2068:
     case LIBSPECTRUM_MACHINE_TS2068:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_MEMORY; break;
@@ -336,8 +336,8 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
         break;
     }
 
-    /* T[CS]20[46]8-style 0x00ff video mode selection */
-    switch( type ) {
+    // T[CS]20[46]8-style 0x00ff video mode selection
+    switch(type) {
     case LIBSPECTRUM_MACHINE_TC2048: case LIBSPECTRUM_MACHINE_TC2068:
     case LIBSPECTRUM_MACHINE_TS2068: case LIBSPECTRUM_MACHINE_SE:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_VIDEO; break;
@@ -345,8 +345,8 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
         break;
     }
 
-    /* Built-in TRDOS-style disk */
-    switch( type ) {
+    // Built-in TRDOS-style disk
+    switch(type) {
     case LIBSPECTRUM_MACHINE_PENT:
     case LIBSPECTRUM_MACHINE_PENT512: case LIBSPECTRUM_MACHINE_PENT1024:
     case LIBSPECTRUM_MACHINE_SCORP:
@@ -355,16 +355,16 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
         break;
     }
 
-    /* T[SC]2068-style cartridge port */
-    switch( type ) {
+    // T[SC]2068-style cartridge port
+    switch(type) {
     case LIBSPECTRUM_MACHINE_TC2068: case LIBSPECTRUM_MACHINE_TS2068:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_TIMEX_DOCK; break;
     default:
         break;
     }
 
-    /* Sinclair-style joystick ports */
-    switch( type ) {
+    // Sinclair-style joystick ports
+    switch(type) {
     case LIBSPECTRUM_MACHINE_PLUS2: case LIBSPECTRUM_MACHINE_PLUS2A:
     case LIBSPECTRUM_MACHINE_PLUS3: case LIBSPECTRUM_MACHINE_PLUS3E:
     case LIBSPECTRUM_MACHINE_128E:
@@ -373,8 +373,8 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
         break;
     }
 
-    /* Kempston-style joystick ports */
-    switch( type ) {
+    // Kempston-style joystick ports
+    switch(type) {
     case LIBSPECTRUM_MACHINE_TC2048:
     case LIBSPECTRUM_MACHINE_SE:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_KEMPSTON_JOYSTICK; break;
@@ -382,32 +382,32 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
         break;
     }
 
-    /* Scorpion-style 0x1ffd memory paging */
-    switch( type ) {
+    // Scorpion-style 0x1ffd memory paging
+    switch(type) {
     case LIBSPECTRUM_MACHINE_SCORP:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_SCORP_MEMORY; break;
     default:
         break;
     }
 
-    /* M1 cycles forced to start on even tstates */
-    switch( type ) {
+    // M1 cycles forced to start on even tstates
+    switch(type) {
     case LIBSPECTRUM_MACHINE_SCORP:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_EVEN_M1; break;
     default:
         break;
     }
 
-    /* SE-style 0x7ffd and 0x00fd memory paging */
-    switch( type ) {
+    // SE-style 0x7ffd and 0x00fd memory paging
+    switch(type) {
     case LIBSPECTRUM_MACHINE_SE:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_SE_MEMORY; break;
     default:
         break;
     }
 
-    /* NTSC display */
-    switch( type ) {
+    // NTSC display
+    switch(type) {
     case LIBSPECTRUM_MACHINE_48_NTSC:
     case LIBSPECTRUM_MACHINE_TS2068:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_NTSC; break;
@@ -415,8 +415,8 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
         break;
     }
 
-    /* Pentagon 512-style memory paging */
-    switch( type ) {
+    // Pentagon 512-style memory paging
+    switch(type) {
     case LIBSPECTRUM_MACHINE_PENT512:
     case LIBSPECTRUM_MACHINE_PENT1024:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_PENT512_MEMORY; break;
@@ -424,8 +424,8 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
         break;
     }
 
-    /* Pentagon 1024-style memory paging */
-    switch( type ) {
+    // Pentagon 1024-style memory paging
+    switch(type) {
     case LIBSPECTRUM_MACHINE_PENT1024:
         capabilities |= LIBSPECTRUM_MACHINE_CAPABILITY_PENT1024_MEMORY; break;
     default:
@@ -440,47 +440,47 @@ int libspectrum_machine_capabilities( libspectrum_machine type )
 libspectrum_error
 libspectrum_identify_file_with_class(
     libspectrum_id_t *type, libspectrum_class_t *libspectrum_class,
-    const char *filename, const unsigned char *buffer, size_t length )
+    const char *filename, const unsigned char *buffer, size_t length)
 {
     libspectrum_error error;
     char *new_filename = NULL; unsigned char *new_buffer; size_t new_length;
 
-    error = libspectrum_identify_file_raw( type, filename, buffer, length );
-    if (error ) return error;
+    error = libspectrum_identify_file_raw(type, filename, buffer, length);
+    if (error) return error;
 
-    error = libspectrum_identify_class( libspectrum_class, *type );
-    if (error ) return error;
+    error = libspectrum_identify_class(libspectrum_class, *type);
+    if (error) return error;
 
-    if (*libspectrum_class != LIBSPECTRUM_CLASS_COMPRESSED )
+    if (*libspectrum_class != LIBSPECTRUM_CLASS_COMPRESSED)
         return LIBSPECTRUM_ERROR_NONE;
 
-    error = libspectrum_uncompress_file( &new_buffer, &new_length, &new_filename,                       *type, buffer, length, filename );
-    if (error ) return error;
+    error = libspectrum_uncompress_file(&new_buffer, &new_length, &new_filename, *type, buffer, length, filename);
+    if (error) return error;
 
-    error = libspectrum_identify_file_with_class( type, libspectrum_class,
+    error = libspectrum_identify_file_with_class(type, libspectrum_class,
                         new_filename, new_buffer,
-                        new_length );
+                        new_length);
 
-    /* new_filename or buffer will be allocated in libspectrum_uncompress_file */
-    libspectrum_free( new_filename ); libspectrum_free( new_buffer );
+    // new_filename or buffer will be allocated in libspectrum_uncompress_file
+    libspectrum_free(new_filename); libspectrum_free(new_buffer);
 
-    if (error ) return error;
+    if (error) return error;
 
     return LIBSPECTRUM_ERROR_NONE;
 }
 
-/* Identify a file, but without worrying about its class */
-libspectrum_error
-libspectrum_identify_file( libspectrum_id_t *type, const char *filename,               const unsigned char *buffer, size_t length )
+// Identify a file, but without worrying about its class
+
+libspectrum_error libspectrum_identify_file(libspectrum_id_t *type, const char *filename, const unsigned char *buffer, size_t length)
 {
     libspectrum_class_t class;
 
-    return libspectrum_identify_file_with_class( type, &class, filename,                           buffer, length );
+    return libspectrum_identify_file_with_class(type, &class, filename, buffer, length);
 }
 
-/* Identify a file without attempting to decompress it */
-libspectrum_error
-libspectrum_identify_file_raw( libspectrum_id_t *type, const char *filename,                   const unsigned char *buffer, size_t length )
+// Identify a file without attempting to decompress it
+
+libspectrum_error libspectrum_identify_file_raw(libspectrum_id_t *type, const char *filename, const unsigned char *buffer, size_t length)
 {
     struct type {
 
@@ -494,154 +494,154 @@ libspectrum_identify_file_raw( libspectrum_id_t *type, const char *filename,    
     struct type *ptr,
         types[] = {
 
-            { LIBSPECTRUM_ID_RECORDING_RZX, "rzx", 3, "RZX!",            0, 4, 4 },
+            { LIBSPECTRUM_ID_RECORDING_RZX, "rzx", 3, "RZX!", 0, 4, 4 },
 
-            { LIBSPECTRUM_ID_SNAPSHOT_SNA,  "sna", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_SNAPSHOT_SNA, "sna", 3, NULL, 0, 0, 0 },
             /* Peter McGavin's Spectrum Emulator on the Amiga used .snapshot for sna
                   snaps */
-            { LIBSPECTRUM_ID_SNAPSHOT_SNA,  "snapshot", 3, NULL,        0, 0, 0 },
-            { LIBSPECTRUM_ID_SNAPSHOT_SNP,  "snp", 3, NULL,            0, 0, 0 },
-            { LIBSPECTRUM_ID_SNAPSHOT_SP,   "sp",  3, "\x53\x50\0",        0, 3, 1 },
-            { LIBSPECTRUM_ID_SNAPSHOT_SZX,  "szx", 3, "ZXST",            0, 4, 4 },
-            { LIBSPECTRUM_ID_SNAPSHOT_Z80,  "z80", 3, "\0\0",            6, 2, 1 },
-            /* .slt files also dealt with by the .z80 loading code */
-            { LIBSPECTRUM_ID_SNAPSHOT_Z80,  "slt", 3, "\0\0",            6, 2, 1 },
-            { LIBSPECTRUM_ID_SNAPSHOT_ZXS,  "zxs", 3, "SNAP",            8, 4, 4 },
-            { LIBSPECTRUM_ID_SNAPSHOT_PLUSD,"mgtsnp", 3, NULL,        0, 0, 0 },
+            { LIBSPECTRUM_ID_SNAPSHOT_SNA, "snapshot", 3, NULL, 0, 0, 0 },
+            { LIBSPECTRUM_ID_SNAPSHOT_SNP, "snp", 3, NULL, 0, 0, 0 },
+            { LIBSPECTRUM_ID_SNAPSHOT_SP, "sp", 3, "\x53\x50\0", 0, 3, 1 },
+            { LIBSPECTRUM_ID_SNAPSHOT_SZX, "szx", 3, "ZXST", 0, 4, 4 },
+            { LIBSPECTRUM_ID_SNAPSHOT_Z80, "z80", 3, "\0\0", 6, 2, 1 },
+            // .slt files also dealt with by the .z80 loading code
+            { LIBSPECTRUM_ID_SNAPSHOT_Z80, "slt", 3, "\0\0", 6, 2, 1 },
+            { LIBSPECTRUM_ID_SNAPSHOT_ZXS, "zxs", 3, "SNAP", 8, 4, 4 },
+            { LIBSPECTRUM_ID_SNAPSHOT_PLUSD,"mgtsnp", 3, NULL, 0, 0, 0 },
 
-            { LIBSPECTRUM_ID_CARTRIDGE_DCK, "dck", 3, NULL,            0, 0, 0 },
-            { LIBSPECTRUM_ID_CARTRIDGE_IF2, "rom", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_CARTRIDGE_DCK, "dck", 3, NULL, 0, 0, 0 },
+            { LIBSPECTRUM_ID_CARTRIDGE_IF2, "rom", 3, NULL, 0, 0, 0 },
 
-            { LIBSPECTRUM_ID_MICRODRIVE_MDR, "mdr", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_MICRODRIVE_MDR, "mdr", 3, NULL, 0, 0, 0 },
 
-            { LIBSPECTRUM_ID_TAPE_TAP,      "tap", 3, "\x13\0\0",        0, 3, 1 },
-            { LIBSPECTRUM_ID_TAPE_SPC,      "spc", 3, "\x11\0\0",        0, 3, 1 },
-            { LIBSPECTRUM_ID_TAPE_STA,      "sta", 3, "\x11\0\0",        0, 3, 1 },
-            { LIBSPECTRUM_ID_TAPE_LTP,      "ltp", 3, "\x11\0\0",        0, 3, 1 },
-            { LIBSPECTRUM_ID_TAPE_TZX,      "tzx", 3, "ZXTape!",        0, 7, 4 },
+            { LIBSPECTRUM_ID_TAPE_TAP, "tap", 3, "\x13\0\0", 0, 3, 1 },
+            { LIBSPECTRUM_ID_TAPE_SPC, "spc", 3, "\x11\0\0", 0, 3, 1 },
+            { LIBSPECTRUM_ID_TAPE_STA, "sta", 3, "\x11\0\0", 0, 3, 1 },
+            { LIBSPECTRUM_ID_TAPE_LTP, "ltp", 3, "\x11\0\0", 0, 3, 1 },
+            { LIBSPECTRUM_ID_TAPE_TZX, "tzx", 3, "ZXTape!", 0, 7, 4 },
             { LIBSPECTRUM_ID_TAPE_WARAJEVO, "tap", 2, "\xff\xff\xff\xff", 8, 4, 2 },
-            { LIBSPECTRUM_ID_TAPE_PZX,      "pzx", 3, "PZXT",            0, 4, 4 },
+            { LIBSPECTRUM_ID_TAPE_PZX, "pzx", 3, "PZXT", 0, 4, 4 },
 
-            { LIBSPECTRUM_ID_DISK_SCL,      "scl", 3, "SINCLAIR",         0, 8, 4 },
-            { LIBSPECTRUM_ID_DISK_TRD,      "trd", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_DISK_SCL, "scl", 3, "SINCLAIR", 0, 8, 4 },
+            { LIBSPECTRUM_ID_DISK_TRD, "trd", 3, NULL, 0, 0, 0 },
 
-            { LIBSPECTRUM_ID_HARDDISK_HDF,  "hdf", 3, "RS-IDE\x1a",        0, 7, 4 },
+            { LIBSPECTRUM_ID_HARDDISK_HDF, "hdf", 3, "RS-IDE\x1a", 0, 7, 4 },
 
-            { LIBSPECTRUM_ID_COMPRESSED_BZ2,"bz2", 3, "BZh",            0, 3, 4 },
-            { LIBSPECTRUM_ID_COMPRESSED_GZ, "gz",  3, "\x1f\x8b",        0, 2, 4 },
-            { LIBSPECTRUM_ID_COMPRESSED_ZIP,"zip", 3, "PK\x03\x04",        0, 4, 4 },
+            { LIBSPECTRUM_ID_COMPRESSED_BZ2,"bz2", 3, "BZh", 0, 3, 4 },
+            { LIBSPECTRUM_ID_COMPRESSED_GZ, "gz", 3, "\x1f\x8b", 0, 2, 4 },
+            { LIBSPECTRUM_ID_COMPRESSED_ZIP,"zip", 3, "PK\x03\x04", 0, 4, 4 },
 
-            { LIBSPECTRUM_ID_TAPE_Z80EM,    "raw", 1, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0Raw tape sample",  0, 64, 0 },
-            { LIBSPECTRUM_ID_TAPE_CSW,      "csw", 2, "Compressed Square Wave\x1a",  0, 23, 4 },
+            { LIBSPECTRUM_ID_TAPE_Z80EM, "raw", 1, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0Raw tape sample", 0, 64, 0 },
+            { LIBSPECTRUM_ID_TAPE_CSW, "csw", 2, "Compressed Square Wave\x1a", 0, 23, 4 },
 
-            { LIBSPECTRUM_ID_TAPE_WAV,      "wav", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_TAPE_WAV, "wav", 3, NULL, 0, 0, 0 },
 
-            { LIBSPECTRUM_ID_DISK_MGT,      "mgt", 3, NULL,            0, 0, 0 },
-            { LIBSPECTRUM_ID_DISK_IMG,      "img", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_DISK_MGT, "mgt", 3, NULL, 0, 0, 0 },
+            { LIBSPECTRUM_ID_DISK_IMG, "img", 3, NULL, 0, 0, 0 },
 
-            { LIBSPECTRUM_ID_DISK_UDI,      "udi", 3, "UDI!",            0, 4, 4 },
-            { LIBSPECTRUM_ID_DISK_ECPC,     "dsk", 3, "EXTENDED", 0, 8, 4 },
-            { LIBSPECTRUM_ID_DISK_CPC,      "dsk", 3, "MV - CPC", 0, 8, 4 },
-            { LIBSPECTRUM_ID_DISK_FDI,      "fdi", 3, "FDI",              0, 3, 4 },
-            { LIBSPECTRUM_ID_DISK_SAD,      "sad", 3, "Aley's disk backup", 0, 18, 4 },
-            { LIBSPECTRUM_ID_DISK_TD0,      "td0", 3, "TD",               0, 2, 4 },
-            { LIBSPECTRUM_ID_DISK_TD0,      "td0", 3, "td",               0, 2, 4 },
+            { LIBSPECTRUM_ID_DISK_UDI, "udi", 3, "UDI!", 0, 4, 4 },
+            { LIBSPECTRUM_ID_DISK_ECPC, "dsk", 3, "EXTENDED", 0, 8, 4 },
+            { LIBSPECTRUM_ID_DISK_CPC, "dsk", 3, "MV - CPC", 0, 8, 4 },
+            { LIBSPECTRUM_ID_DISK_FDI, "fdi", 3, "FDI", 0, 3, 4 },
+            { LIBSPECTRUM_ID_DISK_SAD, "sad", 3, "Aley's disk backup", 0, 18, 4 },
+            { LIBSPECTRUM_ID_DISK_TD0, "td0", 3, "TD", 0, 2, 4 },
+            { LIBSPECTRUM_ID_DISK_TD0, "td0", 3, "td", 0, 2, 4 },
 
-            { LIBSPECTRUM_ID_DISK_OPD,      "opd", 3, NULL,            0, 0, 0 },
-            { LIBSPECTRUM_ID_DISK_OPD,      "opu", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_DISK_OPD, "opd", 3, NULL, 0, 0, 0 },
+            { LIBSPECTRUM_ID_DISK_OPD, "opu", 3, NULL, 0, 0, 0 },
 
-            { LIBSPECTRUM_ID_DISK_D80,      "d80", 3, NULL,            0, 0, 0 },
-            { LIBSPECTRUM_ID_DISK_D80,      "d40", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_DISK_D80, "d80", 3, NULL, 0, 0, 0 },
+            { LIBSPECTRUM_ID_DISK_D80, "d40", 3, NULL, 0, 0, 0 },
 
-            { LIBSPECTRUM_ID_AUX_POK,       "pok", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_AUX_POK, "pok", 3, NULL, 0, 0, 0 },
 
-            { LIBSPECTRUM_ID_SCREEN_SCR,    "scr", 3, NULL,            0, 0, 0 },
-            { LIBSPECTRUM_ID_SCREEN_MLT,    "mlt", 3, NULL,            0, 0, 0 },
+            { LIBSPECTRUM_ID_SCREEN_SCR, "scr", 3, NULL, 0, 0, 0 },
+            { LIBSPECTRUM_ID_SCREEN_MLT, "mlt", 3, NULL, 0, 0, 0 },
 
-            { -1, NULL, 0, NULL, 0, 0, 0 }, /* End marker */
+            { -1, NULL, 0, NULL, 0, 0, 0 }, // End marker
 
         };
 
     const char *extension = NULL;
     int score, best_score, best_guess, duplicate_best;
 
-    /* Get the filename extension, if it exists */
-    if (filename ) {
-        extension = strrchr( filename, '.' ); if (extension ) extension++;
+    // Get the filename extension, if it exists
+    if (filename) {
+        extension = strrchr(filename, '.'); if (extension) extension++;
     }
 
     best_guess = LIBSPECTRUM_ID_UNKNOWN; best_score = 0; duplicate_best = 0;
 
-    /* Compare against known extensions and signatures */
-    for( ptr = types; ptr->type != -1; ptr++ ) {
+    // Compare against known extensions and signatures
+    for(ptr = types; ptr->type != -1; ptr++) {
 
         score = 0;
 
         if (extension && ptr->extension &&
-    !strcasecmp( extension, ptr->extension ) )
+    !strcasecmp(extension, ptr->extension))
             score += ptr->extension_score;
 
         if (ptr->signature && length >= ptr->offset + ptr->length &&
-    !memcmp( &buffer[ ptr->offset ], ptr->signature, ptr->length ) )
+    !memcmp(&buffer[ptr->offset], ptr->signature, ptr->length))
             score += ptr->sig_score;
 
-        if (score > best_score ) {
+        if (score > best_score) {
             best_guess = ptr->type; best_score = score; duplicate_best = 0;
-        } else if (score == best_score && ptr->type != best_guess ) {
+        } else if (score == best_score && ptr->type != best_guess) {
             duplicate_best = 1;
         }
     }
 
 #if defined AMIGA || defined __MORPHOS__
-    /* Compressed file check through xfdmaster.library */
+    // Compressed file check through xfdmaster.library
 
-    /* this prevents most good matches and gz/bz2 from being run through xfd (xfd     supports gz, but we want to use the internal code) */
-    if (best_score <= 3 ) {
+    // this prevents most good matches and gz/bz2 from being run through xfd (xfd     supports gz, but we want to use the internal code)
+    if (best_score <= 3) {
 #ifndef __MORPHOS__
         struct ExecIFace *IExec = (struct ExecIFace *)(*(struct ExecBase **)4)->MainInterface;
-#endif                /* #ifndef __MORPHOS__ */
+#endif                // #ifndef __MORPHOS__
         struct xfdBufferInfo *xfdobj;
 
 #ifndef __MORPHOS__
-        if (xfdMasterBase = IExec->OpenLibrary("xfdmaster.library",38 ) ) {
+        if (xfdMasterBase = IExec->OpenLibrary("xfdmaster.library",38)) {
             if (IxfdMaster = (struct xfdMasterIFace *)IExec->GetInterface(xfdMasterBase,"main",1,NULL)){
-                if (xfdobj = (struct xfdBufferInfo *)IxfdMaster->xfdAllocObject(XFDOBJ_BUFFERINFO) ) {
-#else                /* #ifndef __MORPHOS__ */
-        if (xfdMasterBase = OpenLibrary("xfdmaster.library",38 ) ) {
-                if (xfdobj = (struct xfdBufferInfo *)xfdAllocObject(XFDOBJ_BUFFERINFO) ) {
-#endif                /* #ifndef __MORPHOS__ */
+                if (xfdobj = (struct xfdBufferInfo *)IxfdMaster->xfdAllocObject(XFDOBJ_BUFFERINFO)) {
+#else                // #ifndef __MORPHOS__
+        if (xfdMasterBase = OpenLibrary("xfdmaster.library",38)) {
+                if (xfdobj = (struct xfdBufferInfo *)xfdAllocObject(XFDOBJ_BUFFERINFO)) {
+#endif                // #ifndef __MORPHOS__
                     xfdobj->xfdbi_SourceBuffer = buffer;
                     xfdobj->xfdbi_SourceBufLen = length;
                     xfdobj->xfdbi_Flags = XFDFB_RECOGTARGETLEN | XFDFB_RECOGEXTERN;
 
 #ifndef __MORPHOS__
-                    if (IxfdMaster->xfdRecogBuffer( xfdobj ) ) {
-#else                /* #ifndef __MORPHOS__ */
-                    if (xfdRecogBuffer( xfdobj ) ) {
-#endif                /* #ifndef __MORPHOS__ */
+                    if (IxfdMaster->xfdRecogBuffer(xfdobj)) {
+#else                // #ifndef __MORPHOS__
+                    if (xfdRecogBuffer(xfdobj)) {
+#endif                // #ifndef __MORPHOS__
                         best_guess = LIBSPECTRUM_ID_COMPRESSED_XFD;
                         duplicate_best=0;
                     }
 #ifndef __MORPHOS__
-                    IxfdMaster->xfdFreeObject( (APTR)xfdobj );
-#else                /* #ifndef __MORPHOS__ */
-                    xfdFreeObject( (APTR)xfdobj );
-#endif                /* #ifndef __MORPHOS__ */
+                    IxfdMaster->xfdFreeObject((APTR)xfdobj);
+#else                // #ifndef __MORPHOS__
+                    xfdFreeObject((APTR)xfdobj);
+#endif                // #ifndef __MORPHOS__
                 }
 #ifndef __MORPHOS__
-                IExec->DropInterface( (struct Interface *)IxfdMaster );
+                IExec->DropInterface((struct Interface *)IxfdMaster);
             }
-            IExec->CloseLibrary( xfdMasterBase );
-#else                /* #ifndef __MORPHOS__ */
-            CloseLibrary( xfdMasterBase );
-#endif                /* #ifndef __MORPHOS__ */
+            IExec->CloseLibrary(xfdMasterBase);
+#else                // #ifndef __MORPHOS__
+            CloseLibrary(xfdMasterBase);
+#endif                // #ifndef __MORPHOS__
         }
     }
-#endif /* #ifdef AMIGA */
+#endif // #ifdef AMIGA
 
     /* If two things were equally good, we can't identify this. Otherwise,
           return our best guess */
-    if (duplicate_best ) {
+    if (duplicate_best) {
         *type = LIBSPECTRUM_ID_UNKNOWN;
     } else {
         *type = best_guess;
@@ -650,11 +650,11 @@ libspectrum_identify_file_raw( libspectrum_id_t *type, const char *filename,    
     return LIBSPECTRUM_ERROR_NONE;
 }
 
-/* What generic 'class' of file is this file */
-libspectrum_error
-libspectrum_identify_class( libspectrum_class_t *libspectrum_class,                libspectrum_id_t type )
+// What generic 'class' of file is this file
+
+libspectrum_error libspectrum_identify_class(libspectrum_class_t *libspectrum_class, libspectrum_id_t type)
 {
-    switch( type ) {
+    switch(type) {
 
     case LIBSPECTRUM_ID_UNKNOWN:
         *libspectrum_class = LIBSPECTRUM_CLASS_UNKNOWN; return 0;
@@ -735,67 +735,67 @@ libspectrum_identify_class( libspectrum_class_t *libspectrum_class,             
 
     }
 
-    libspectrum_print_error( LIBSPECTRUM_ERROR_UNKNOWN,               "Unknown file type %d", type );
+    libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN, "Unknown file type %d", type);
     return LIBSPECTRUM_ERROR_UNKNOWN;
 }
 
 libspectrum_error
-libspectrum_uncompress_file( unsigned char **new_buffer, size_t *new_length,
+libspectrum_uncompress_file(unsigned char **new_buffer, size_t *new_length,
                  char **new_filename, libspectrum_id_t type,
                  const unsigned char *old_buffer,
-                 size_t old_length, const char *old_filename )
+                 size_t old_length, const char *old_filename)
 {
     libspectrum_class_t class;
     libspectrum_error error;
 
-    error = libspectrum_identify_class( &class, type );
-    if (error ) return error;
+    error = libspectrum_identify_class(&class, type);
+    if (error) return error;
 
-    if (class != LIBSPECTRUM_CLASS_COMPRESSED ) {
-        libspectrum_print_error( LIBSPECTRUM_ERROR_LOGIC,                 "file type %d is not a compressed type", type );
+    if (class != LIBSPECTRUM_CLASS_COMPRESSED) {
+        libspectrum_print_error(LIBSPECTRUM_ERROR_LOGIC, "file type %d is not a compressed type", type);
         return LIBSPECTRUM_ERROR_LOGIC;
     }
 
-    if (new_filename && old_filename ) {
-        *new_filename = strdup( old_filename );
-        if (!*new_filename ) {
-            libspectrum_print_error( LIBSPECTRUM_ERROR_MEMORY,                   "out of memory at %s:%d", __FILE__, __LINE__ );
+    if (new_filename && old_filename) {
+        *new_filename = strdup(old_filename);
+        if (!*new_filename) {
+            libspectrum_print_error(LIBSPECTRUM_ERROR_MEMORY, "out of memory at %s:%d", __FILE__, __LINE__);
             return LIBSPECTRUM_ERROR_MEMORY;
         }
     }
 
-    /* Tells the inflation routines to allocate memory for us */
+    // Tells the inflation routines to allocate memory for us
     *new_length = 0;
 
-    switch( type ) {
+    switch(type) {
 
     case LIBSPECTRUM_ID_COMPRESSED_BZ2:
 
 #ifdef HAVE_LIBBZ2
 
-        if (new_filename && *new_filename ) {
-            if (strlen( *new_filename ) >= 4 &&
-      !strcasecmp( &(*new_filename)[ strlen( *new_filename ) - 4 ],
-               ".bz2" ) )
-    (*new_filename)[ strlen( *new_filename ) - 4 ] = '\0';
+        if (new_filename && *new_filename) {
+            if (strlen(*new_filename) >= 4 &&
+      !strcasecmp(&(*new_filename)[strlen(*new_filename) - 4],
+               ".bz2"))
+    (*new_filename)[strlen(*new_filename) - 4] = '\0';
         }
 
-        error = libspectrum_bzip2_inflate( old_buffer, old_length,                       new_buffer, new_length );
-        if (error ) {
-            if (new_filename ) libspectrum_free( *new_filename );
+        error = libspectrum_bzip2_inflate(old_buffer, old_length, new_buffer, new_length);
+        if (error) {
+            if (new_filename) libspectrum_free(*new_filename);
             return error;
         }
 
-#else                /* #ifdef HAVE_LIBBZ2 */
+#else                // #ifdef HAVE_LIBBZ2
 
         libspectrum_print_error(
             LIBSPECTRUM_ERROR_UNKNOWN,
             "libbz2 not available to decompress bzipped file"
-        );
-        if (new_filename ) libspectrum_free( *new_filename );
+);
+        if (new_filename) libspectrum_free(*new_filename);
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif                /* #ifdef HAVE_LIBBZ2 */
+#endif                // #ifdef HAVE_LIBBZ2
 
         break;
 
@@ -803,52 +803,52 @@ libspectrum_uncompress_file( unsigned char **new_buffer, size_t *new_length,
 
 #ifdef HAVE_ZLIB_H
 
-        if (new_filename && *new_filename ) {
-            if (strlen( *new_filename ) >= 3 &&
-      !strcasecmp( &(*new_filename)[ strlen( *new_filename ) - 3 ],
-               ".gz" ) )
-    (*new_filename)[ strlen( *new_filename ) - 3 ] = '\0';
+        if (new_filename && *new_filename) {
+            if (strlen(*new_filename) >= 3 &&
+      !strcasecmp(&(*new_filename)[strlen(*new_filename) - 3],
+               ".gz"))
+    (*new_filename)[strlen(*new_filename) - 3] = '\0';
         }
 
-        error = libspectrum_gzip_inflate( old_buffer, old_length,                      new_buffer, new_length );
-        if (error ) {
-            if (new_filename ) libspectrum_free( *new_filename );
+        error = libspectrum_gzip_inflate(old_buffer, old_length, new_buffer, new_length);
+        if (error) {
+            if (new_filename) libspectrum_free(*new_filename);
             return error;
         }
 
-#else                /* #ifdef HAVE_ZLIB_H */
+#else                // #ifdef HAVE_ZLIB_H
 
-        libspectrum_print_error( LIBSPECTRUM_ERROR_UNKNOWN,                 "zlib not available to decompress gzipped file" );
-        if (new_filename ) libspectrum_free( *new_filename );
+        libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN, "zlib not available to decompress gzipped file");
+        if (new_filename) libspectrum_free(*new_filename);
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif                /* #ifdef HAVE_ZLIB_H */
+#endif                // #ifdef HAVE_ZLIB_H
 
         break;
 
     case LIBSPECTRUM_ID_COMPRESSED_ZIP:
 
 #ifdef HAVE_ZLIB_H
-        if (new_filename && *new_filename ) {
-            if (strlen( *new_filename ) >= 4 &&
-                    !strcasecmp( &(*new_filename)[ strlen( *new_filename ) - 4 ],
-                                              ".zip" ) )
-            (*new_filename)[ strlen( *new_filename ) - 4 ] = '\0';
+        if (new_filename && *new_filename) {
+            if (strlen(*new_filename) >= 4 &&
+                    !strcasecmp(&(*new_filename)[strlen(*new_filename) - 4],
+                                              ".zip"))
+            (*new_filename)[strlen(*new_filename) - 4] = '\0';
         }
 
-        error = libspectrum_zip_blind_read( old_buffer, old_length,                                        new_buffer, new_length );
-        if (error ) {
-            if (new_filename ) libspectrum_free( *new_filename );
+        error = libspectrum_zip_blind_read(old_buffer, old_length, new_buffer, new_length);
+        if (error) {
+            if (new_filename) libspectrum_free(*new_filename);
             return error;
         }
 
-#else                /* #ifdef HAVE_ZLIB_H */
+#else                // #ifdef HAVE_ZLIB_H
 
-        libspectrum_print_error( LIBSPECTRUM_ERROR_UNKNOWN,                             "zlib not available to decompress zipped file" );
-        if (new_filename ) libspectrum_free( *new_filename );
+        libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN, "zlib not available to decompress zipped file");
+        if (new_filename) libspectrum_free(*new_filename);
         return LIBSPECTRUM_ERROR_UNKNOWN;
 
-#endif                /* #ifdef HAVE_ZLIB_H */
+#endif                // #ifdef HAVE_ZLIB_H
 
         break;
 
@@ -857,74 +857,74 @@ libspectrum_uncompress_file( unsigned char **new_buffer, size_t *new_length,
         {
 #ifndef __MORPHOS__
             struct ExecIFace *IExec = (struct ExecIFace *)(*(struct ExecBase **)4)->MainInterface;
-#endif                /* #ifndef __MORPHOS__ */
+#endif                // #ifndef __MORPHOS__
             struct xfdBufferInfo *xfdobj;
 
 #ifndef __MORPHOS__
-            if (xfdMasterBase = IExec->OpenLibrary( "xfdmaster.library", 38 ) ) {
+            if (xfdMasterBase = IExec->OpenLibrary("xfdmaster.library", 38)) {
                 if (IxfdMaster = (struct xfdMasterIFace *)IExec->GetInterface(xfdMasterBase,"main",1,NULL)) {
-                    if (xfdobj = (struct xfdBufferInfo *)IxfdMaster->xfdAllocObject(XFDOBJ_BUFFERINFO) ) {
-#else                /* #ifndef __MORPHOS__ */
-            if (xfdMasterBase = OpenLibrary( "xfdmaster.library", 38 ) ) {
-                    if (xfdobj = (struct xfdBufferInfo *)xfdAllocObject(XFDOBJ_BUFFERINFO) ) {
-#endif                /* #ifndef __MORPHOS__ */
+                    if (xfdobj = (struct xfdBufferInfo *)IxfdMaster->xfdAllocObject(XFDOBJ_BUFFERINFO)) {
+#else                // #ifndef __MORPHOS__
+            if (xfdMasterBase = OpenLibrary("xfdmaster.library", 38)) {
+                    if (xfdobj = (struct xfdBufferInfo *)xfdAllocObject(XFDOBJ_BUFFERINFO)) {
+#endif                // #ifndef __MORPHOS__
                         xfdobj->xfdbi_SourceBufLen = old_length;
                         xfdobj->xfdbi_SourceBuffer = old_buffer;
                         xfdobj->xfdbi_Flags = XFDFB_RECOGEXTERN | XFDFB_RECOGTARGETLEN;
                         xfdobj->xfdbi_PackerFlags = XFDPFB_RECOGLEN;
 #ifndef __MORPHOS__
-                        if (IxfdMaster->xfdRecogBuffer( xfdobj ) ) {
-#else                /* #ifndef __MORPHOS__ */
-                        if (xfdRecogBuffer( xfdobj ) ) {
-#endif                /* #ifndef __MORPHOS__ */
+                        if (IxfdMaster->xfdRecogBuffer(xfdobj)) {
+#else                // #ifndef __MORPHOS__
+                        if (xfdRecogBuffer(xfdobj)) {
+#endif                // #ifndef __MORPHOS__
                             xfdobj->xfdbi_TargetBufMemType = MEMF_ANY;
 #ifndef __MORPHOS__
-                            if (IxfdMaster->xfdDecrunchBuffer( xfdobj ) ) {
-#else                /* #ifndef __MORPHOS__ */
-                            if (xfdDecrunchBuffer( xfdobj ) ) {
-#endif                /* #ifndef __MORPHOS__ */
-                                *new_buffer = libspectrum_new( char, xfdobj->xfdbi_TargetBufSaveLen );
+                            if (IxfdMaster->xfdDecrunchBuffer(xfdobj)) {
+#else                // #ifndef __MORPHOS__
+                            if (xfdDecrunchBuffer(xfdobj)) {
+#endif                // #ifndef __MORPHOS__
+                                *new_buffer = libspectrum_new(char, xfdobj->xfdbi_TargetBufSaveLen);
                                 *new_length = xfdobj->xfdbi_TargetBufSaveLen;
-                                memcpy( *new_buffer, xfdobj->xfdbi_TargetBuffer, *new_length );
+                                memcpy(*new_buffer, xfdobj->xfdbi_TargetBuffer, *new_length);
 #ifndef __MORPHOS__
-                                IExec->FreeMem( xfdobj->xfdbi_TargetBuffer,xfdobj->xfdbi_TargetBufLen );
-#else                /* #ifndef __MORPHOS__ */
-                                FreeMem( xfdobj->xfdbi_TargetBuffer,xfdobj->xfdbi_TargetBufLen );
-#endif                /* #ifndef __MORPHOS__ */
+                                IExec->FreeMem(xfdobj->xfdbi_TargetBuffer,xfdobj->xfdbi_TargetBufLen);
+#else                // #ifndef __MORPHOS__
+                                FreeMem(xfdobj->xfdbi_TargetBuffer,xfdobj->xfdbi_TargetBufLen);
+#endif                // #ifndef __MORPHOS__
                             } else {
                                 libspectrum_print_error(
                                                           LIBSPECTRUM_ERROR_UNKNOWN,
                                                           "xfdmaster.library not able to decrunch %s file",
-                                                          xfdobj->xfdbi_PackerName );
+                                                          xfdobj->xfdbi_PackerName);
                                 return LIBSPECTRUM_ERROR_UNKNOWN;
                             }
                         } else {
                             libspectrum_print_error(
                                                                   LIBSPECTRUM_ERROR_UNKNOWN,
-                                                                  "xfdmaster.library does not recognise file" );
+                                                                  "xfdmaster.library does not recognise file");
                             return LIBSPECTRUM_ERROR_UNKNOWN;
                         }
 #ifndef __MORPHOS__
-                        IxfdMaster->xfdFreeObject( xfdobj );
-#else                /* #ifndef __MORPHOS__ */
-                        xfdFreeObject( xfdobj );
-#endif                /* #ifndef __MORPHOS__ */
+                        IxfdMaster->xfdFreeObject(xfdobj);
+#else                // #ifndef __MORPHOS__
+                        xfdFreeObject(xfdobj);
+#endif                // #ifndef __MORPHOS__
                     }
 #ifndef __MORPHOS__
-                    IExec->DropInterface( (struct Interface *)IxfdMaster );
+                    IExec->DropInterface((struct Interface *)IxfdMaster);
                 }
-                IExec->CloseLibrary( xfdMasterBase );
-#else                /* #ifndef __MORPHOS__ */
-                CloseLibrary( xfdMasterBase );
-#endif                /* #ifndef __MORPHOS__ */
+                IExec->CloseLibrary(xfdMasterBase);
+#else                // #ifndef __MORPHOS__
+                CloseLibrary(xfdMasterBase);
+#endif                // #ifndef __MORPHOS__
             }
         }
         break;
-#endif /* #ifdef AMIGA */
+#endif // #ifdef AMIGA
 
     default:
-        libspectrum_print_error( LIBSPECTRUM_ERROR_LOGIC,                 "unknown compressed type %d", type );
-        if (new_filename ) libspectrum_free( *new_filename );
+        libspectrum_print_error(LIBSPECTRUM_ERROR_LOGIC, "unknown compressed type %d", type);
+        if (new_filename) libspectrum_free(*new_filename);
         return LIBSPECTRUM_ERROR_LOGIC;
     }
 
@@ -934,21 +934,21 @@ libspectrum_uncompress_file( unsigned char **new_buffer, size_t *new_length,
 /* Ensure there is room for `requested' characters after the current
       position `ptr' in `buffer'. If not, renew() and update the
       pointers as necessary */
-void
-libspectrum_make_room( libspectrum_byte **dest, size_t requested,               libspectrum_byte **ptr, size_t *allocated )
+
+void libspectrum_make_room(libspectrum_byte **dest, size_t requested, libspectrum_byte **ptr, size_t *allocated)
 {
     size_t current_length = 0;
 
-    if (*allocated == 0 ) {
+    if (*allocated == 0) {
 
         (*allocated) = requested;
-        *dest = libspectrum_new( libspectrum_byte, requested );
+        *dest = libspectrum_new(libspectrum_byte, requested);
 
     } else {
         current_length = *ptr - *dest;
 
-        /* If there's already enough room here, just return */
-        if (current_length + requested <= (*allocated) ) return;
+        // If there's already enough room here, just return
+        if (current_length + requested <= (*allocated)) return;
 
         /* Make the new size the maximum of the new needed size and the
           old allocated size * 2 */
@@ -956,15 +956,15 @@ libspectrum_make_room( libspectrum_byte **dest, size_t requested,               
             current_length + requested :
             2 * (*allocated);
 
-        *dest = libspectrum_renew( libspectrum_byte, *dest, *allocated );
+        *dest = libspectrum_renew(libspectrum_byte, *dest, *allocated);
     }
 
-    /* Update the secondary pointer to the block */
+    // Update the secondary pointer to the block
     *ptr = *dest + current_length;
 }
 
-/* Read an LSB word from 'buffer' */
-libspectrum_word libspectrum_read_word( const libspectrum_byte **buffer )
+// Read an LSB word from 'buffer'
+libspectrum_word libspectrum_read_word(const libspectrum_byte **buffer)
 {
     libspectrum_word value;
 
@@ -975,8 +975,8 @@ libspectrum_word libspectrum_read_word( const libspectrum_byte **buffer )
     return value;
 }
 
-/* Read an LSB dword from buffer */
-libspectrum_dword libspectrum_read_dword( const libspectrum_byte **buffer )
+// Read an LSB dword from buffer
+libspectrum_dword libspectrum_read_dword(const libspectrum_byte **buffer)
 {
     libspectrum_dword value;
 
@@ -990,21 +990,21 @@ libspectrum_dword libspectrum_read_dword( const libspectrum_byte **buffer )
     return value;
 }
 
-/* Write an (LSB) word to buffer */
-int
-libspectrum_write_word( libspectrum_byte **buffer, libspectrum_word w )
+// Write an (LSB) word to buffer
+
+int libspectrum_write_word(libspectrum_byte **buffer, libspectrum_word w)
 {
     *(*buffer)++ = w & 0xff;
     *(*buffer)++ = w >> 8;
     return LIBSPECTRUM_ERROR_NONE;
 }
 
-/* Write an LSB dword to buffer */
-int libspectrum_write_dword( libspectrum_byte **buffer, libspectrum_dword d )
+// Write an LSB dword to buffer
+int libspectrum_write_dword(libspectrum_byte **buffer, libspectrum_dword d)
 {
-    *(*buffer)++ = ( d & 0x000000ff )      ;
-    *(*buffer)++ = ( d & 0x0000ff00 ) >>  8;
-    *(*buffer)++ = ( d & 0x00ff0000 ) >> 16;
-    *(*buffer)++ = ( d & 0xff000000 ) >> 24;
+    *(*buffer)++ = (d & 0x000000ff)      ;
+    *(*buffer)++ = (d & 0x0000ff00) >>  8;
+    *(*buffer)++ = (d & 0x00ff0000) >> 16;
+    *(*buffer)++ = (d & 0xff000000) >> 24;
     return LIBSPECTRUM_ERROR_NONE;
 }

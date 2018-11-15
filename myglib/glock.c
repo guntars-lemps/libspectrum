@@ -26,20 +26,20 @@
 
 #include "internals.h"
 
-void atomic_lock( atomic_char *lock_ptr )
+void atomic_lock(atomic_char *lock_ptr)
 {
-    char locked = ATOMIC_VAR_INIT( 1 );
+    char locked = ATOMIC_VAR_INIT(1);
     char unlocked;
     do {
-        unlocked = ATOMIC_VAR_INIT( 0 );
-    } while( !atomic_compare_exchange_strong( lock_ptr, &unlocked, locked ) );
+        unlocked = ATOMIC_VAR_INIT(0);
+    } while(!atomic_compare_exchange_strong(lock_ptr, &unlocked, locked));
 }
 
-void atomic_unlock( atomic_char *lock_ptr )
+void atomic_unlock(atomic_char *lock_ptr)
 {
     char locked;
-    char unlocked = ATOMIC_VAR_INIT( 0 );
+    char unlocked = ATOMIC_VAR_INIT(0);
     do {
-        locked = ATOMIC_VAR_INIT( 1 );
-    } while( !atomic_compare_exchange_strong( lock_ptr, &locked, unlocked ) );
+        locked = ATOMIC_VAR_INIT(1);
+    } while(!atomic_compare_exchange_strong(lock_ptr, &locked, unlocked));
 }

@@ -66,15 +66,15 @@ static GHashNode *node_allocated_list = NULL;
 
 static atomic_char atomic_locker = ATOMIC_VAR_INIT(0);
 
-#define lock() atomic_lock( &atomic_locker )
-#define unlock() atomic_unlock( &atomic_locker )
+#define lock() atomic_lock(&atomic_locker)
+#define unlock() atomic_unlock(&atomic_locker)
 
-#else                /* #ifdef HAVE_STDATOMIC_H */
+#else                // #ifdef HAVE_STDATOMIC_H
 
 #define lock()
 #define unlock()
 
-#endif                /* #ifdef HAVE_STDATOMIC_H */
+#endif                // #ifdef HAVE_STDATOMIC_H
 
 static guint g_direct_hash (gconstpointer v)
 {
@@ -82,9 +82,9 @@ static guint g_direct_hash (gconstpointer v)
 }
 
 GHashTable*
-g_hash_table_new (GHashFunc    hash_func,          GCompareFunc    key_equal_func)
+g_hash_table_new (GHashFunc    hash_func, GCompareFunc    key_equal_func)
 {
-    return g_hash_table_new_full( hash_func, key_equal_func, NULL, NULL );
+    return g_hash_table_new_full(hash_func, key_equal_func, NULL, NULL);
 }
 
 GHashTable*
@@ -155,17 +155,17 @@ void g_hash_table_destroy (GHashTable *hash_table)
 }
 
 static GHashNode**
-g_hash_table_lookup_node (GHashTable    *hash_table,                          gconstpointer  key)
+g_hash_table_lookup_node (GHashTable    *hash_table, gconstpointer  key)
 {
     GHashNode **node;
 
     node = &hash_table->nodes
         [(* hash_table->hash_func) (key) % HASH_TABLE_SIZE];
 
-    while( *node ) {
-        if (hash_table->key_equal_func ) {
-                if (hash_table->key_equal_func( (*node)->key, key ) ) break;
-        } else if ((*node)->key == key ) {
+    while(*node) {
+        if (hash_table->key_equal_func) {
+                if (hash_table->key_equal_func((*node)->key, key)) break;
+        } else if ((*node)->key == key) {
             break;
         }
 
@@ -175,8 +175,8 @@ g_hash_table_lookup_node (GHashTable    *hash_table,                          gc
     return node;
 }
 
-gpointer
-g_hash_table_lookup (GHashTable   *hash_table,             gconstpointer key)
+
+gpointer g_hash_table_lookup(GHashTable   *hash_table, gconstpointer key)
 {
     GHashNode *node;
 
@@ -186,7 +186,7 @@ g_hash_table_lookup (GHashTable   *hash_table,             gconstpointer key)
 }
 
 static GHashNode*
-g_hash_node_new (gpointer key,                 gpointer value)
+g_hash_node_new (gpointer key, gpointer value)
 {
     GHashNode *hash_node;
     guint i;
@@ -197,7 +197,7 @@ g_hash_node_new (gpointer key,                 gpointer value)
             node_free_list = libspectrum_malloc (1024 * sizeof (GHashNode));
             node_allocated_list = node_free_list;
 
-            for(i = 0; i < 1023; i++ )
+            for(i = 0; i < 1023; i++)
     node_free_list[i].next = &node_free_list[i+1];
             node_free_list[1023].next = NULL;
         }
@@ -225,7 +225,7 @@ g_hash_table_insert (GHashTable *hash_table,
 
     if (*node)
         {
-            /* free the passed key */
+            // free the passed key
             if (hash_table->key_destroy_func)
                 hash_table->key_destroy_func (key);
 
@@ -326,15 +326,15 @@ guint g_int_hash (gconstpointer v)
     return *(const gint*) v;
 }
 
-gboolean
-g_int_equal (gconstpointer v1,             gconstpointer v2)
+
+gboolean g_int_equal(gconstpointer v1, gconstpointer v2)
 {
     return *((const gint*) v1) == *((const gint*) v2);
 }
 
 guint g_str_hash (gconstpointer v)
 {
-    /* 31 bit hash function */
+    // 31 bit hash function
     const signed char *p = v;
     libspectrum_dword h = *p;
 
@@ -345,8 +345,8 @@ guint g_str_hash (gconstpointer v)
     return h;
 }
 
-gboolean
-g_str_equal (gconstpointer v1,             gconstpointer v2)
+
+gboolean g_str_equal(gconstpointer v1, gconstpointer v2)
 {
     const gchar *string1 = v1;
     const gchar *string2 = v2;
@@ -354,12 +354,12 @@ g_str_equal (gconstpointer v1,             gconstpointer v2)
     return strcmp (string1, string2) == 0;
 }
 
-void libspectrum_hashtable_cleanup( void )
+void libspectrum_hashtable_cleanup(void)
 {
     lock();
-    libspectrum_free( node_allocated_list );
+    libspectrum_free(node_allocated_list);
     node_allocated_list = NULL;
     node_free_list = NULL;
     unlock();
 }
-#endif                /* #ifndef HAVE_LIB_GLIB */
+#endif                // #ifndef HAVE_LIB_GLIB

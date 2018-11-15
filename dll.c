@@ -25,10 +25,10 @@
 
 #include "internals.h"
 
-BOOL APIENTRY
-DllMain( HANDLE module, DWORD reason, LPVOID opaque )
+
+BOOL APIENTRY DllMain(HANDLE module, DWORD reason, LPVOID opaque)
 {
-    switch( reason ) {
+    switch(reason) {
     case DLL_PROCESS_ATTACH:
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:

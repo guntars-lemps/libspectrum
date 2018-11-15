@@ -29,33 +29,33 @@
 
 static const libspectrum_dword tstates_per_ms = TZX_HZ / 1000;
 
-libspectrum_dword libspectrum_ms_to_tstates( libspectrum_dword ms )
+libspectrum_dword libspectrum_ms_to_tstates(libspectrum_dword ms)
 {
     return ms * tstates_per_ms;
 }
 
-libspectrum_dword libspectrum_tstates_to_ms( libspectrum_dword tstates )
+libspectrum_dword libspectrum_tstates_to_ms(libspectrum_dword tstates)
 {
     return tstates / tstates_per_ms;
 }
 
-void
-libspectrum_set_pause_ms( libspectrum_tape_block *block,                          libspectrum_dword pause_ms )
+
+void libspectrum_set_pause_ms(libspectrum_tape_block *block, libspectrum_dword pause_ms)
 {
-    libspectrum_tape_block_set_pause( block, pause_ms );
-    libspectrum_tape_block_set_pause_tstates( block,
-                                                                                libspectrum_ms_to_tstates( pause_ms ) );
+    libspectrum_tape_block_set_pause(block, pause_ms);
+    libspectrum_tape_block_set_pause_tstates(block,
+                                                                                libspectrum_ms_to_tstates(pause_ms));
 }
 
-void
-libspectrum_set_pause_tstates( libspectrum_tape_block *block,                               libspectrum_dword pause_tstates )
+
+void libspectrum_set_pause_tstates(libspectrum_tape_block *block, libspectrum_dword pause_tstates)
 {
-    libspectrum_tape_block_set_pause_tstates( block, pause_tstates );
-    libspectrum_tape_block_set_pause( block,
-                                                                    libspectrum_tstates_to_ms( pause_tstates ) );
+    libspectrum_tape_block_set_pause_tstates(block, pause_tstates);
+    libspectrum_tape_block_set_pause(block,
+                                                                    libspectrum_tstates_to_ms(pause_tstates));
 }
 
-size_t libspectrum_bits_to_bytes( size_t bits )
+size_t libspectrum_bits_to_bytes(size_t bits)
 {
-    return ( bits + LIBSPECTRUM_BITS_IN_BYTE - 1 ) / LIBSPECTRUM_BITS_IN_BYTE;
+    return (bits + LIBSPECTRUM_BITS_IN_BYTE - 1) / LIBSPECTRUM_BITS_IN_BYTE;
 }
