@@ -138,7 +138,7 @@ libspectrum_error internal_tap_write(libspectrum_buffer *buffer, libspectrum_tap
     {
         int done = 0;
 
-        switch(libspectrum_tape_block_type(block)) {
+        switch (libspectrum_tape_block_type(block)) {
 
         case LIBSPECTRUM_TAPE_BLOCK_ROM:
             error = write_rom(block, buffer, type);

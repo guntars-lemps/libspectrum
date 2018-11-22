@@ -49,7 +49,7 @@ static libspectrum_error seek(struct libspectrum_zip *z, long offset, int whence
 {
     const libspectrum_byte *ptr;
 
-    switch(whence) {
+    switch (whence) {
     case SEEK_SET:
         ptr = z->input_data + offset;
         break;
@@ -539,7 +539,7 @@ libspectrum_error libspectrum_zip_read(struct libspectrum_zip *z, libspectrum_by
     // Now read the data depending on the compression method used
     compression = z->file_info.compression;
 
-    switch(compression) {
+    switch (compression) {
 
     case 0: // store
         if (z->ptr + *size > z->end) {

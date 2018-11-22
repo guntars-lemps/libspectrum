@@ -117,7 +117,7 @@ static libspectrum_error inflate_block(libspectrum_byte **uncompressed, size_t *
 
     return LIBSPECTRUM_ERROR_NONE;
 
-#else                // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
     // No zlib, so can't inflate the block
     return LIBSPECTRUM_ERROR_UNKNOWN;
@@ -180,7 +180,7 @@ read_fmtz_chunk(libspectrum_snap *snap, int *compression,
 
     model = libspectrum_read_word(buffer);
 
-    switch(model) {
+    switch (model) {
 
     case 0x0010:  case 0x0020:
         libspectrum_snap_set_machine(snap, LIBSPECTRUM_MACHINE_48);
@@ -214,7 +214,7 @@ read_fmtz_chunk(libspectrum_snap *snap, int *compression,
 
     *compression = libspectrum_read_word(buffer);
 
-    switch(*compression) {
+    switch (*compression) {
 
     case 0x0008:            // Deflation
         *compression = 1; break;

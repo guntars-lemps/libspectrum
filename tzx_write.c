@@ -115,7 +115,7 @@ libspectrum_error internal_tzx_write(libspectrum_buffer* buffer, libspectrum_tap
               block;
               block = libspectrum_tape_iterator_next(&iterator))
     {
-        switch(libspectrum_tape_block_type(block)) {
+        switch (libspectrum_tape_block_type(block)) {
 
         case LIBSPECTRUM_TAPE_BLOCK_ROM:
             tzx_write_rom(block, buffer);

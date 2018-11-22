@@ -1064,7 +1064,7 @@ int main(int argc, char *argv[])
         printf("Test %d: %s... ", ((int)i + 1), test->description);
         if (test->active) {
             tests_done++;
-            switch(test->test()) {
+            switch (test->test()) {
                 case TEST_PASS:
                     printf("passed\n");
                     pass++;

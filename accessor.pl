@@ -289,7 +289,7 @@ struct libspectrum_snap {
   /* Covox status */
   int covox_active;
   libspectrum_byte covox_dac;
-  
+
   /* ULAplus emulation */
   int ulaplus_active;
   int ulaplus_palette_enabled;
@@ -333,13 +333,13 @@ while(<>) {
 	print << "CODE";
 
 $type
-libspectrum_snap_$name( libspectrum_snap *snap, int idx )
+libspectrum_snap_$name(libspectrum_snap *snap, int idx)
 {
-  return snap->$name\[idx\];
+    return snap->$name\[idx\];
 }
 
-void
-libspectrum_snap_set_$name( libspectrum_snap *snap, int idx, $type $name )
+
+void libspectrum_snap_set_$name(libspectrum_snap *snap, int idx, $type $name)
 {
   snap->$name\[idx\] = $name;
 }
@@ -350,15 +350,15 @@ CODE
 	print << "CODE";
 
 $type
-libspectrum_snap_$name( libspectrum_snap *snap )
+libspectrum_snap_$name(libspectrum_snap *snap)
 {
-  return snap->$name;
+    return snap->$name;
 }
 
-void
-libspectrum_snap_set_$name( libspectrum_snap *snap, $type $name )
+
+void libspectrum_snap_set_$name(libspectrum_snap *snap, $type $name)
 {
-  snap->$name = $name;
+    snap->$name = $name;
 }
 CODE
 

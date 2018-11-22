@@ -75,7 +75,7 @@ libspectrum_error libspectrum_tape_block_free(libspectrum_tape_block *block)
 {
     size_t i;
 
-    switch(block->type) {
+    switch (block->type) {
 
     case LIBSPECTRUM_TAPE_BLOCK_ROM:
         libspectrum_free(block->types.rom.data);
@@ -204,7 +204,7 @@ libspectrum_error libspectrum_tape_block_init(libspectrum_tape_block *block, lib
         return LIBSPECTRUM_ERROR_NONE;
     }
 
-    switch(libspectrum_tape_block_type(block)) {
+    switch (libspectrum_tape_block_type(block)) {
 
     case LIBSPECTRUM_TAPE_BLOCK_ROM:
         return rom_init(&(block->types.rom), &(state->block_state.rom));
@@ -397,7 +397,7 @@ static libspectrum_error data_block_init(libspectrum_tape_data_block *block, lib
 // Does this block consist solely of metadata?
 int libspectrum_tape_block_metadata(libspectrum_tape_block *block)
 {
-    switch(block->type) {
+    switch (block->type) {
     case LIBSPECTRUM_TAPE_BLOCK_ROM:
     case LIBSPECTRUM_TAPE_BLOCK_TURBO:
     case LIBSPECTRUM_TAPE_BLOCK_PURE_TONE:
@@ -488,7 +488,7 @@ libspectrum_tape_block_read_symbol_table(
 
 void libspectrum_tape_block_zero(libspectrum_tape_block *block)
 {
-    switch(block->type) {
+    switch (block->type) {
     case LIBSPECTRUM_TAPE_BLOCK_GENERALISED_DATA:
         block->types.generalised_data.pilot_table.symbols = NULL;
         block->types.generalised_data.data_table.symbols = NULL;
@@ -735,7 +735,7 @@ libspectrum_dword libspectrum_tape_block_length(libspectrum_tape_block *block)
 {
     libspectrum_tape_pure_tone_block *pure_tone;
 
-    switch(block->type) {
+    switch (block->type) {
     case LIBSPECTRUM_TAPE_BLOCK_ROM:
         return rom_block_length(&block->types.rom);
     case LIBSPECTRUM_TAPE_BLOCK_TURBO:

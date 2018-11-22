@@ -49,7 +49,7 @@ int main(void)
     printf("typedef uint64_t libspectrum_qword;\n");
     printf("typedef  int64_t libspectrum_signed_qword;\n");
 
-#else                // #ifdef HAVE_STDINT_H
+#else // #ifdef HAVE_STDINT_H
 
     if (sizeof(char) == 1) {
         printf("typedef unsigned char libspectrum_byte;\n");
@@ -115,7 +115,7 @@ int main(void)
 
     printf("  $_ = \"#define LIBSPECTRUM_HAS_GLIB_REPLACEMENT 0\\n\"\n");
 
-#else                // #ifdef HAVE_LIB_GLIB
+#else // #ifdef HAVE_LIB_GLIB
 
     printf("  $_ = << \"CODE\";\n"
 "#define LIBSPECTRUM_HAS_GLIB_REPLACEMENT 1\n"

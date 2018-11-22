@@ -82,7 +82,7 @@ libspectrum_error internal_sna_read(libspectrum_snap *snap, const libspectrum_by
 
 static int identify_machine(size_t buffer_length, libspectrum_snap *snap)
 {
-    switch(buffer_length) {
+    switch (buffer_length) {
     case 49179:
         libspectrum_snap_set_machine(snap, LIBSPECTRUM_MACHINE_48);
         break;
@@ -152,7 +152,7 @@ static int libspectrum_sna_read_data(const libspectrum_byte *buffer, size_t buff
         return LIBSPECTRUM_ERROR_CORRUPT;
     }
 
-    switch(libspectrum_snap_machine(snap)) {
+    switch (libspectrum_snap_machine(snap)) {
 
     case LIBSPECTRUM_MACHINE_48:
 
@@ -360,7 +360,7 @@ libspectrum_error libspectrum_sna_write(libspectrum_buffer *buffer, int *out_fla
 
     buffer_mem = libspectrum_buffer_alloc();
 
-    switch(libspectrum_snap_machine(snap)) {
+    switch (libspectrum_snap_machine(snap)) {
 
     case LIBSPECTRUM_MACHINE_48_NTSC:
     case LIBSPECTRUM_MACHINE_TC2048:

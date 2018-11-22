@@ -69,7 +69,7 @@ libspectrum_error libspectrum_plusd_read(libspectrum_snap *snap, const libspectr
 
 static libspectrum_error identify_machine(size_t buffer_length, libspectrum_snap *snap)
 {
-    switch(buffer_length) {
+    switch (buffer_length) {
     case PLUSD_HEADER_LENGTH + 0xc000:
         libspectrum_snap_set_machine(snap, LIBSPECTRUM_MACHINE_48);
         break;
@@ -128,7 +128,7 @@ static libspectrum_error libspectrum_plusd_read_data(const libspectrum_byte *buf
         return LIBSPECTRUM_ERROR_CORRUPT;
     }
 
-    switch(libspectrum_snap_machine(snap)) {
+    switch (libspectrum_snap_machine(snap)) {
 
     case LIBSPECTRUM_MACHINE_48:
 
@@ -175,7 +175,7 @@ static libspectrum_byte readbyte(libspectrum_snap *snap, libspectrum_word addres
 {
     int page;
 
-    switch(address >> 14) {
+    switch (address >> 14) {
 
     case 1:
         page = 5;

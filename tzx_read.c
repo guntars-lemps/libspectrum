@@ -126,7 +126,7 @@ libspectrum_error internal_tzx_read(libspectrum_tape *tape, const libspectrum_by
         // Get the ID of the next block
         libspectrum_tape_type id = *ptr++;
 
-        switch(id) {
+        switch (id) {
         case LIBSPECTRUM_TAPE_BLOCK_ROM:
             error = tzx_read_rom_block(tape, &ptr, end);
             if (error) { libspectrum_tape_clear(tape); return error; }

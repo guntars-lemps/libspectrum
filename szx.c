@@ -375,7 +375,7 @@ read_ram_page(libspectrum_byte **data, size_t *page,
 
         *buffer += data_length - 3;
 
-#else            // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
         libspectrum_print_error(
             LIBSPECTRUM_ERROR_UNKNOWN,
@@ -754,7 +754,7 @@ read_opus_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
             *buffer += disc_rom_length;
         }
 
-#else            // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
         libspectrum_print_error(
             LIBSPECTRUM_ERROR_UNKNOWN,
@@ -945,7 +945,7 @@ read_plsd_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
             *buffer += disc_rom_length;
         }
 
-#else            // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
         libspectrum_print_error(
             LIBSPECTRUM_ERROR_UNKNOWN,
@@ -1122,7 +1122,7 @@ read_joy_chunk(libspectrum_snap *snap, libspectrum_word version,
         add_joystick(snap, LIBSPECTRUM_JOYSTICK_KEMPSTON, LIBSPECTRUM_JOYSTICK_INPUT_NONE);
     }
 
-    switch(**buffer) {
+    switch (**buffer) {
     case ZXJT_KEMPSTON:
         add_joystick(snap, LIBSPECTRUM_JOYSTICK_KEMPSTON, LIBSPECTRUM_JOYSTICK_INPUT_JOYSTICK_1);
         break;
@@ -1149,7 +1149,7 @@ read_joy_chunk(libspectrum_snap *snap, libspectrum_word version,
     }
     (*buffer)++;
 
-    switch(**buffer) {
+    switch (**buffer) {
     case ZXJT_KEMPSTON:
         add_joystick(snap, LIBSPECTRUM_JOYSTICK_KEMPSTON, LIBSPECTRUM_JOYSTICK_INPUT_JOYSTICK_2);
         break;
@@ -1201,7 +1201,7 @@ read_keyb_chunk(libspectrum_snap *snap, libspectrum_word version,
     libspectrum_snap_set_issue2(snap, !!(flags & ZXSTKF_ISSUE2));
 
     if (expected_length >= 5) {
-        switch(**buffer) {
+        switch (**buffer) {
         case ZXJT_KEMPSTON:
             add_joystick(snap, LIBSPECTRUM_JOYSTICK_KEMPSTON, LIBSPECTRUM_JOYSTICK_INPUT_KEYBOARD);
             break;
@@ -1245,7 +1245,7 @@ read_amxm_chunk(libspectrum_snap *snap, libspectrum_word version,
         return LIBSPECTRUM_ERROR_UNKNOWN;
     }
 
-    switch(**buffer) {
+    switch (**buffer) {
     case ZXSTM_AMX:
         break;
     case ZXSTM_KEMPSTON:
@@ -1553,7 +1553,7 @@ read_if1_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
             *buffer += data_length - 40;
 
-#else            // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
             libspectrum_print_error(
                 LIBSPECTRUM_ERROR_UNKNOWN,
@@ -1677,7 +1677,7 @@ read_rom_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
         *buffer += data_length - 6;
 
-#else            // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
         libspectrum_print_error(
             LIBSPECTRUM_ERROR_UNKNOWN,
@@ -1812,7 +1812,7 @@ read_if2r_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
     return LIBSPECTRUM_ERROR_NONE;
 
-#else            // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
     libspectrum_print_error(
         LIBSPECTRUM_ERROR_UNKNOWN,
@@ -2340,7 +2340,7 @@ read_mfce_chunk(libspectrum_snap *snap, libspectrum_word version GCC_UNUSED,
 
         *buffer += disc_ram_length;
 
-#else            // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
         libspectrum_print_error(
             LIBSPECTRUM_ERROR_UNKNOWN,
@@ -2559,7 +2559,7 @@ libspectrum_error libspectrum_szx_read(libspectrum_snap *snap, const libspectrum
 
     machine = *buffer++;
 
-    switch(machine) {
+    switch (machine) {
 
     case SZX_MACHINE_16:
         libspectrum_snap_set_machine(snap, LIBSPECTRUM_MACHINE_16);
@@ -2639,7 +2639,7 @@ libspectrum_error libspectrum_szx_read(libspectrum_snap *snap, const libspectrum
 
     flags = *buffer++;
 
-    switch(machine) {
+    switch (machine) {
 
     case SZX_MACHINE_16:
     case SZX_MACHINE_48:
@@ -2887,7 +2887,7 @@ static libspectrum_error write_file_header(libspectrum_buffer *buffer, int *out_
     libspectrum_buffer_write_byte(buffer, SZX_VERSION_MAJOR);
     libspectrum_buffer_write_byte(buffer, SZX_VERSION_MINOR);
 
-    switch(libspectrum_snap_machine(snap)) {
+    switch (libspectrum_snap_machine(snap)) {
 
     case LIBSPECTRUM_MACHINE_16:     flags = SZX_MACHINE_16; break;
     case LIBSPECTRUM_MACHINE_48:     flags = SZX_MACHINE_48; break;
@@ -3037,7 +3037,7 @@ static void write_joystick(libspectrum_buffer *buffer, int *out_flags, libspectr
 
     for (i = 0; i < num_joysticks; i++) {
         if (libspectrum_snap_joystick_inputs(snap, i) & connection) {
-            switch(libspectrum_snap_joystick_list(snap, i)) {
+            switch (libspectrum_snap_joystick_list(snap, i)) {
             case LIBSPECTRUM_JOYSTICK_CURSOR:
                 if (!found) { type = ZXJT_CURSOR; found = 1; }
                 else *out_flags |= LIBSPECTRUM_FLAG_SNAPSHOT_MINOR_INFO_LOSS;
@@ -3160,7 +3160,7 @@ static libspectrum_error write_rom_chunk(libspectrum_buffer *buffer, libspectrum
     }
 
     // Check that we have the expected number of ROMs per the machine type
-    switch(libspectrum_snap_machine(snap)) {
+    switch (libspectrum_snap_machine(snap)) {
 
     case LIBSPECTRUM_MACHINE_16:
     case LIBSPECTRUM_MACHINE_48:

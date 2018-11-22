@@ -49,7 +49,7 @@ typedef struct
     unsigned bits_used : 3;
 } status_bits;
 
-#else                   // #ifdef WORDS_BIGENDIAN
+#else // #ifdef WORDS_BIGENDIAN
 
 typedef struct
 {
@@ -292,7 +292,7 @@ add_bit_to_copy_command(libspectrum_byte *dest, const libspectrum_byte *src,
     }
 
     if (command.mode == 1) {
-        switch(command.state){
+        switch (command.state){
         case  b: // start
             command.state = bit == 0 ? b0 : b1;
             break;
@@ -353,7 +353,7 @@ add_bit_to_copy_command(libspectrum_byte *dest, const libspectrum_byte *src,
     }
 
     if (command.mode == 2) {
-        switch(command.vstate){
+        switch (command.vstate){
         case v: // start
             command.offset = src[(*sp)++];
             if (bit == 0)
@@ -535,7 +535,7 @@ static libspectrum_error read_raw_data(libspectrum_tape *tape, const libspectrum
     status.byte = *(ptr + offset + 10);
 
     // Get the metadata
-    switch(status.bits.frequency) {
+    switch (status.bits.frequency) {
     case HZ15000: bit_length = 233; break;
     case HZ22050: bit_length = 158; break;
     case HZ30303: bit_length = 115; break;

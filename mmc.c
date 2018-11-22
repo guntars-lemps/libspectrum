@@ -517,7 +517,7 @@ static int do_application_command(libspectrum_mmc_card *card)
 {
     int is_acmd = 1;
 
-    switch(card->current_command) {
+    switch (card->current_command) {
         case SD_STATUS:
         case SEND_NUM_WR_BLOCKS:
         case SET_WR_BLK_ERASE_COUNT:
@@ -554,7 +554,7 @@ static int do_application_command(libspectrum_mmc_card *card)
 
 static void do_standard_command(libspectrum_mmc_card *card)
 {
-    switch(card->current_command) {
+    switch (card->current_command) {
         case GO_IDLE_STATE:
             card->r1_status |= IN_IDLE_STATE_MASK;
             card->cmd8_issued = 0;
@@ -623,7 +623,7 @@ static void do_command(libspectrum_mmc_card *card)
 
     // Check ongoing erase sequence
     if (card->erase_sequence != SEQ_ERASE_NONE) {
-        switch(card->current_command) {
+        switch (card->current_command) {
             case ERASE_WR_BLK_START:
             case ERASE_WR_BLK_END:
             case ERASE:
@@ -673,7 +673,7 @@ static void write_single_block(libspectrum_mmc_card *card)
 
 static void do_command_data(libspectrum_mmc_card *card)
 {
-    switch(card->current_command) {
+    switch (card->current_command) {
         case WRITE_BLOCK:
             write_single_block(card);
             break;
@@ -693,7 +693,7 @@ void libspectrum_mmc_write(libspectrum_mmc_card *card, libspectrum_byte data)
     // No card inserted => no change in state
     if (!card->drive.disk) return;
 
-    switch(card->command_state) {
+    switch (card->command_state) {
         case WAITING_FOR_COMMAND:
             if (parse_command(card, data))
                 card->command_state = WAITING_FOR_DATA0;

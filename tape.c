@@ -217,7 +217,7 @@ libspectrum_tape_read(libspectrum_tape *tape, const libspectrum_byte *buffer,
         buffer = new_buffer; length = new_length;
     }
 
-    switch(type) {
+    switch (type) {
 
     case LIBSPECTRUM_ID_TAPE_TAP:
     case LIBSPECTRUM_ID_TAPE_SPC:
@@ -240,7 +240,7 @@ libspectrum_tape_read(libspectrum_tape *tape, const libspectrum_byte *buffer,
     case LIBSPECTRUM_ID_TAPE_WAV:
 #ifdef HAVE_LIB_AUDIOFILE
         error = libspectrum_wav_read(tape, filename); break;
-#else     // #ifdef HAVE_LIB_AUDIOFILE
+#else // #ifdef HAVE_LIB_AUDIOFILE
         error = LIBSPECTRUM_ERROR_LOGIC;
         libspectrum_print_error(
             LIBSPECTRUM_ERROR_LOGIC,
@@ -285,7 +285,7 @@ libspectrum_error libspectrum_tape_write(libspectrum_byte **buffer, size_t *leng
 
     new_buffer = libspectrum_buffer_alloc();
 
-    switch(type) {
+    switch (type) {
 
     case LIBSPECTRUM_ID_TAPE_TAP:
     case LIBSPECTRUM_ID_TAPE_SPC:
@@ -355,7 +355,7 @@ libspectrum_tape_get_next_edge_internal(libspectrum_dword *tstates,
     *flags = 0;
 
     if (block) {
-        switch(block->type) {
+        switch (block->type) {
         case LIBSPECTRUM_TAPE_BLOCK_ROM:
             error = rom_edge(&(block->types.rom), &(it->block_state.rom), tstates,
                                                 &end_of_block, flags);
@@ -581,7 +581,7 @@ rom_edge(libspectrum_tape_rom_block *block,
 {
     int error;
 
-    switch(state->state) {
+    switch (state->state) {
 
     case LIBSPECTRUM_TAPE_STATE_PILOT:
         // The next edge occurs in one pilot edge timing
@@ -675,7 +675,7 @@ turbo_edge(libspectrum_tape_turbo_block *block,
 {
     int error;
 
-    switch(state->state) {
+    switch (state->state) {
 
     case LIBSPECTRUM_TAPE_STATE_PILOT:
         // Check we actually have some edges
@@ -802,7 +802,7 @@ pure_data_edge(libspectrum_tape_pure_data_block *block,
 {
     int error;
 
-    switch(state->state) {
+    switch (state->state) {
 
     case LIBSPECTRUM_TAPE_STATE_DATA1:
         // The first edge for a bit of data
@@ -979,7 +979,7 @@ set_tstates_and_flags(libspectrum_tape_generalised_data_symbol *symbol,
     *tstates = symbol->lengths[edge];
 
     if (!edge) {
-        switch(symbol->edge_type) {
+        switch (symbol->edge_type) {
         case LIBSPECTRUM_TAPE_GENERALISED_DATA_SYMBOL_EDGE:
             break;
         case LIBSPECTRUM_TAPE_GENERALISED_DATA_SYMBOL_NO_EDGE:
@@ -1005,7 +1005,7 @@ generalised_data_edge(libspectrum_tape_generalised_data_block *block,
     libspectrum_tape_generalised_data_symbol *symbol;
     size_t current_symbol;
 
-    switch(state->state) {
+    switch (state->state) {
     case LIBSPECTRUM_TAPE_STATE_PILOT:
         table = &(block->pilot_table);
         current_symbol = block->pilot_symbols[state->run];
@@ -1203,7 +1203,7 @@ data_block_edge(libspectrum_tape_data_block *block,
 {
     int error;
 
-    switch(state->state) {
+    switch (state->state) {
 
     case LIBSPECTRUM_TAPE_STATE_DATA1:
         // The next pulse for a bit of data
@@ -1371,7 +1371,7 @@ libspectrum_tape_insert_block(libspectrum_tape *tape,
 
 libspectrum_error libspectrum_tape_block_description(char *buffer, size_t length, libspectrum_tape_block *block)
 {
-    switch(block->type) {
+    switch (block->type) {
     case LIBSPECTRUM_TAPE_BLOCK_ROM:
         strncpy(buffer, "Standard Speed Data", length);
         break;
@@ -1508,7 +1508,7 @@ libspectrum_error libspectrum_tape_guess_hardware(libspectrum_machine *machine, 
 
             if (score <= current_score) continue;
 
-            switch(hardware->ids[i]) {
+            switch (hardware->ids[i]) {
 
             case 0: // 16K Spectrum
     *machine = LIBSPECTRUM_MACHINE_16; current_score = score;
@@ -1596,7 +1596,7 @@ libspectrum_tape_block* libspectrum_tape_iterator_peek_next(libspectrum_tape_ite
 libspectrum_tape_state_type libspectrum_tape_state(libspectrum_tape *tape)
 {
     libspectrum_tape_block *block = libspectrum_tape_iterator_current(tape->state.current_block);
-    switch(block->type) {
+    switch (block->type) {
 
         case LIBSPECTRUM_TAPE_BLOCK_PURE_DATA: return tape->state.block_state.pure_data.state;
         case LIBSPECTRUM_TAPE_BLOCK_RAW_DATA: return tape->state.block_state.raw_data.state;
@@ -1616,7 +1616,7 @@ libspectrum_tape_state_type libspectrum_tape_state(libspectrum_tape *tape)
 libspectrum_error libspectrum_tape_set_state(libspectrum_tape *tape, libspectrum_tape_state_type state)
 {
     libspectrum_tape_block *block = libspectrum_tape_iterator_current(tape->state.current_block);
-    switch(block->type) {
+    switch (block->type) {
 
         case LIBSPECTRUM_TAPE_BLOCK_PURE_DATA: tape->state.block_state.pure_data.state = state; break;
         case LIBSPECTRUM_TAPE_BLOCK_RAW_DATA: tape->state.block_state.raw_data.state = state; break;

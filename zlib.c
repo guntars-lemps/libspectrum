@@ -107,7 +107,7 @@ static libspectrum_error zlib_inflate(const libspectrum_byte *gzptr, size_t gzle
 
     }
 
-    switch(error) {
+    switch (error) {
 
     case Z_OK: break;
 
@@ -152,7 +152,7 @@ static libspectrum_error zlib_inflate(const libspectrum_byte *gzptr, size_t gzle
     *outlength = stream.next_out - *outptr;
     *outptr = libspectrum_renew(libspectrum_byte, *outptr, *outlength);
 
-    switch(error) {
+    switch (error) {
 
     case Z_STREAM_END: break;
 

@@ -185,7 +185,7 @@ static libspectrum_error block_free(rzx_block_t *block)
     signature_block_t *signature;
 #endif // #ifdef HAVE_GCRYPT_H
 
-    switch(block->type) {
+    switch (block->type) {
 
     case LIBSPECTRUM_RZX_INPUT_BLOCK:
         input = &(block->types.input);
@@ -700,7 +700,7 @@ libspectrum_error libspectrum_rzx_read(libspectrum_rzx *rzx, const libspectrum_b
 
         id = *ptr++;
 
-        switch(id) {
+        switch (id) {
 
         case LIBSPECTRUM_RZX_CREATOR_BLOCK:
             error = rzx_read_creator(&ptr, end);
@@ -880,7 +880,7 @@ static libspectrum_error rzx_read_snapshot(libspectrum_rzx *rzx, const libspectr
         }
         snap_ptr = gzsnap;
 
-#else            // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
         libspectrum_print_error(
             LIBSPECTRUM_ERROR_UNKNOWN,
@@ -1013,7 +1013,7 @@ static libspectrum_error rzx_read_input(libspectrum_rzx *rzx, const libspectrum_
 
         libspectrum_free(data);
 
-#else                // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
         libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN, "rzx_read_input: zlib needed for decompression");
         libspectrum_free(rzx_block);
@@ -1227,7 +1227,7 @@ libspectrum_rzx_write(libspectrum_byte **buffer, size_t *length,
 
         rzx_block_t *block = list->data;
 
-        switch(block->type) {
+        switch (block->type) {
 
         case LIBSPECTRUM_RZX_SNAPSHOT_BLOCK:
             error = rzx_write_snapshot(new_buffer, block_data,
@@ -1287,7 +1287,7 @@ static void rzx_write_header(libspectrum_buffer *buffer, int sign)
     // Minor version number: 12 if we're not signing, 13 if we are
     libspectrum_buffer_write_byte(buffer, sign ? 13 : 12);    // Minor version number
     libspectrum_buffer_write_dword(buffer, sign ? 0x01 : 0x00);
-#else                // #ifdef HAVE_GCRYPT_H
+#else // #ifdef HAVE_GCRYPT_H
     libspectrum_buffer_write_byte(buffer, 12);    // Minor version number
     libspectrum_buffer_write_dword(buffer, 0);
 #endif // #ifdef HAVE_GCRYPT_H
@@ -1361,7 +1361,7 @@ static libspectrum_error rzx_compress(libspectrum_buffer *dest, libspectrum_buff
 
     return LIBSPECTRUM_ERROR_NONE;
 
-#else                // #ifdef HAVE_ZLIB_H
+#else // #ifdef HAVE_ZLIB_H
 
     libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN, "rzx_compress: compression needs zlib");
     return LIBSPECTRUM_ERROR_UNKNOWN;

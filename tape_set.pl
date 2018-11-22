@@ -85,7 +85,7 @@ while( <> ) {
     next if /^\s*$/;
 
     if( /^\s/ ) {
-	
+
 	my( $type, $member ) = split;
 
 	$member ||= $name;
@@ -103,7 +103,7 @@ while( <> ) {
 
 	printf "libspectrum_error\nlibspectrum_tape_block_set_$name( libspectrum_tape_block *block, $type %s$name",
             ( $indexed ? "*" : "" );
-	print " )\n{\n  switch( block->type ) {\n\n";
+	print " )\n{\n  switch ( block->type ) {\n\n";
 
         $started = 1;
     }

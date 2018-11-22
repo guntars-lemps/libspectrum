@@ -252,7 +252,7 @@ static libspectrum_error read_header(const libspectrum_byte *buffer, libspectrum
         extra_length = header[LIBSPECTRUM_Z80_HEADER_LENGTH] +
                                       header[LIBSPECTRUM_Z80_HEADER_LENGTH + 1] * 0x100;
 
-        switch(extra_length) {
+        switch (extra_length) {
         case LIBSPECTRUM_Z80_V2_LENGTH:
             *version = 2;
             break;
@@ -331,7 +331,7 @@ static libspectrum_error read_header(const libspectrum_byte *buffer, libspectrum
 
         if (extra_header[5] & 0x80) {
 
-            switch(libspectrum_snap_machine(snap)) {
+            switch (libspectrum_snap_machine(snap)) {
 
             case LIBSPECTRUM_MACHINE_48:
     libspectrum_snap_set_machine(snap, LIBSPECTRUM_MACHINE_16); break;
@@ -410,7 +410,7 @@ static libspectrum_error get_machine_type(libspectrum_snap *snap, libspectrum_by
 
     if (type < Z80_MACHINE_FIRST_EXTENSION) {
 
-        switch(version) {
+        switch (version) {
 
         case 2:
             error = get_machine_type_v2(snap, type); if (error) return error;
@@ -437,7 +437,7 @@ static libspectrum_error get_machine_type(libspectrum_snap *snap, libspectrum_by
 
 static libspectrum_error get_machine_type_v2(libspectrum_snap *snap, libspectrum_byte type)
 {
-    switch(type) {
+    switch (type) {
 
     case Z80_MACHINE_48_V2:
     case Z80_MACHINE_48_SAMRAM_V2:
@@ -463,7 +463,7 @@ static libspectrum_error get_machine_type_v2(libspectrum_snap *snap, libspectrum
 
 static libspectrum_error get_mgt_type(libspectrum_snap *snap, libspectrum_byte type)
 {
-    switch(type) {
+    switch (type) {
 
     case Z80_MGT_DISCIPLE_EPSON:
     case Z80_MGT_DISCIPLE_HP:
@@ -488,7 +488,7 @@ static libspectrum_error get_machine_type_v3(libspectrum_snap *snap, libspectrum
 {
     libspectrum_error error;
 
-    switch(type) {
+    switch (type) {
 
     case Z80_MACHINE_48:
     case Z80_MACHINE_48_SAMRAM:
@@ -528,7 +528,7 @@ static libspectrum_error get_machine_type_v3(libspectrum_snap *snap, libspectrum
 
 static libspectrum_error get_machine_type_extension(libspectrum_snap *snap, libspectrum_byte type)
 {
-    switch(type) {
+    switch (type) {
 
     case Z80_MACHINE_PLUS3:
     case Z80_MACHINE_PLUS3_XZX_ERROR:
@@ -570,7 +570,7 @@ get_joystick_type(libspectrum_snap *snap,
                                                                                 LIBSPECTRUM_JOYSTICK_INPUT_KEYBOARD |
                                                                                 LIBSPECTRUM_JOYSTICK_INPUT_JOYSTICK_1);
 
-    switch(version) {
+    switch (version) {
 
     case 1:
     case 2:
@@ -597,7 +597,7 @@ get_joystick_type(libspectrum_snap *snap,
 
 static libspectrum_error get_joystick_type_v1(libspectrum_snap *snap, libspectrum_byte type)
 {
-    switch(type) {
+    switch (type) {
 
     case Z80_JOYSTICK_CURSOR_V1:
         libspectrum_snap_set_joystick_list(snap, 0, LIBSPECTRUM_JOYSTICK_CURSOR);
@@ -628,7 +628,7 @@ get_joystick_type_v3(libspectrum_snap *snap,
                                             const libspectrum_byte *custom_keys_base,
                                             libspectrum_byte type)
 {
-    switch(type) {
+    switch (type) {
 
     case Z80_JOYSTICK_CURSOR_V3:
         libspectrum_snap_set_joystick_list(snap, 0, LIBSPECTRUM_JOYSTICK_CURSOR);
@@ -742,7 +742,7 @@ static libspectrum_error read_slt(libspectrum_snap *snap, const libspectrum_byte
         // Reset the pointer back to the start of the block
         (*next_block) -= 8;
 
-        switch(type) {
+        switch (type) {
 
         case LIBSPECTRUM_SLT_TYPE_LEVEL:    // Level data
 
@@ -923,7 +923,7 @@ read_block(const libspectrum_byte *buffer, libspectrum_snap *snap,
               Then remap the numbers slightly */
         if (!(capabilities & LIBSPECTRUM_MACHINE_CAPABILITY_128_MEMORY)) {
 
-            switch(page) {
+            switch (page) {
 
             case 3:
     libspectrum_free(uncompressed);
@@ -974,29 +974,29 @@ read_v1_block(const libspectrum_byte *buffer, int is_compressed,
     return LIBSPECTRUM_ERROR_CORRUPT;
             }
 
-            switch(state) {
+            switch (state) {
             case 0:
-    switch(*ptr++) {
+    switch (*ptr++) {
     case 0x00: state = 1; break;
       default: state = 0; break;
     }
     break;
             case 1:
-    switch(*ptr++) {
+    switch (*ptr++) {
     case 0x00: state = 1; break;
     case 0xed: state = 2; break;
       default: state = 0; break;
     }
     break;
             case 2:
-    switch(*ptr++) {
+    switch (*ptr++) {
     case 0x00: state = 1; break;
     case 0xed: state = 3; break;
       default: state = 0; break;
     }
     break;
             case 3:
-    switch(*ptr++) {
+    switch (*ptr++) {
     case 0x00: state = 4; break;
       default: state = 0; break;
     }
@@ -1256,7 +1256,7 @@ static void write_base_header(libspectrum_buffer *buffer, int *flags, libspectru
     if (libspectrum_snap_joystick_active_count(snap) != 1)
         *flags |= LIBSPECTRUM_FLAG_SNAPSHOT_MINOR_INFO_LOSS;
 
-    switch(libspectrum_snap_joystick_list(snap, 0)) {
+    switch (libspectrum_snap_joystick_list(snap, 0)) {
     case LIBSPECTRUM_JOYSTICK_CURSOR:
         joystick_flags = Z80_JOYSTICK_CURSOR_V3;
         break;
@@ -1300,7 +1300,7 @@ static libspectrum_error write_extended_header(libspectrum_buffer *buffer, int *
 
     int capabilities = libspectrum_machine_capabilities(libspectrum_snap_machine(snap));
 
-    switch(libspectrum_snap_machine(snap)) {
+    switch (libspectrum_snap_machine(snap)) {
     case LIBSPECTRUM_MACHINE_48_NTSC:
         *flags |= LIBSPECTRUM_FLAG_SNAPSHOT_MAJOR_INFO_LOSS;
         // fall through
