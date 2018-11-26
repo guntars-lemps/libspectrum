@@ -1,23 +1,23 @@
 /* snapshot.c: Snapshot handling routines
-      Copyright (c) 2001-2009 Philip Kendall, Darren Salt
+   Copyright (c) 2001-2009 Philip Kendall, Darren Salt
 
-      This program is free software; you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation; either version 2 of the License, or
-      (at your option) any later version.
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-      You should have received a copy of the GNU General Public License along
-      with this program; if not, write to the Free Software Foundation, Inc.,
-      51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-      Author contact information:
+   Author contact information:
 
-      E-mail: philip-fuse@shadowmagic.org.uk
+   E-mail: philip-fuse@shadowmagic.org.uk
 
 */
 
@@ -34,6 +34,7 @@ const int LIBSPECTRUM_FLAG_SNAPSHOT_ALWAYS_COMPRESS = 1 << 1;
 // Some flags which may be returned from libspectrum_snap_write()
 const int LIBSPECTRUM_FLAG_SNAPSHOT_MINOR_INFO_LOSS = 1 << 0;
 const int LIBSPECTRUM_FLAG_SNAPSHOT_MAJOR_INFO_LOSS = 1 << 1;
+
 
 // Initialise a libspectrum_snap structure
 libspectrum_snap* libspectrum_snap_alloc(void)
@@ -78,8 +79,9 @@ libspectrum_snap* libspectrum_snap_alloc(void)
         libspectrum_snap_set_rom_length(snap, i, 0);
     }
 
-    for (i = 0; i < SNAPSHOT_RAM_PAGES; i++)
+    for (i = 0; i < SNAPSHOT_RAM_PAGES; i++) {
         libspectrum_snap_set_pages(snap, i, NULL);
+    }
     for (i = 0; i < SNAPSHOT_SLT_PAGES; i++) {
         libspectrum_snap_set_slt(snap, i, NULL);
         libspectrum_snap_set_slt_length(snap, i, 0);
@@ -92,7 +94,9 @@ libspectrum_snap* libspectrum_snap_alloc(void)
     libspectrum_snap_set_out_128_memoryport(snap, 0x07);
 
     libspectrum_snap_set_out_ay_registerport(snap, 0x0e);
-    for (i = 0; i < 16; i++) libspectrum_snap_set_ay_registers(snap, i, 0);
+    for (i = 0; i < 16; i++) {
+        libspectrum_snap_set_ay_registers(snap, i, 0);
+    }
 
     libspectrum_snap_set_out_plus3_memoryport(snap, 0x08);
 
@@ -159,15 +163,17 @@ libspectrum_snap* libspectrum_snap_alloc(void)
     libspectrum_snap_set_zxatasp_control(snap, 0);
     libspectrum_snap_set_zxatasp_pages(snap, 0);
     libspectrum_snap_set_zxatasp_current_page(snap, 0);
-    for (i = 0; i < SNAPSHOT_ZXATASP_PAGES; i++)
+    for (i = 0; i < SNAPSHOT_ZXATASP_PAGES; i++) {
         libspectrum_snap_set_zxatasp_ram(snap, i, NULL);
+    }
 
     libspectrum_snap_set_zxcf_active(snap, 0);
     libspectrum_snap_set_zxcf_upload(snap, 0);
     libspectrum_snap_set_zxcf_memctl(snap, 0x00);
     libspectrum_snap_set_zxcf_pages(snap, 0);
-    for (i = 0; i < SNAPSHOT_ZXCF_PAGES; i++)
+    for (i = 0; i < SNAPSHOT_ZXCF_PAGES; i++) {
         libspectrum_snap_set_zxcf_ram(snap, i, NULL);
+    }
 
     libspectrum_snap_set_interface2_active(snap, 0);
     libspectrum_snap_set_interface2_rom(snap, 0, NULL);
@@ -290,25 +296,29 @@ libspectrum_snap* libspectrum_snap_alloc(void)
     return snap;
 }
 
+
 // Free all memory used by a libspectrum_snap structure (destructor...)
 libspectrum_error libspectrum_snap_free(libspectrum_snap *snap)
 {
     size_t i;
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++) {
         libspectrum_free(libspectrum_snap_roms(snap, i));
+    }
 
-    for (i = 0; i < SNAPSHOT_RAM_PAGES; i++)
+    for (i = 0; i < SNAPSHOT_RAM_PAGES; i++) {
         libspectrum_free(libspectrum_snap_pages(snap, i));
+    }
 
-    for (i = 0; i < SNAPSHOT_SLT_PAGES; i++)
+    for (i = 0; i < SNAPSHOT_SLT_PAGES; i++) {
         libspectrum_free(libspectrum_snap_slt(snap, i));
+    }
 
     libspectrum_free(libspectrum_snap_slt_screen(snap));
 
-    for (i = 0; i < SNAPSHOT_ZXCF_PAGES; i++)
+    for (i = 0; i < SNAPSHOT_ZXCF_PAGES; i++) {
         libspectrum_free(libspectrum_snap_zxcf_ram(snap, i));
-
+    }
     libspectrum_free(libspectrum_snap_interface2_rom(snap, 0));
 
     for (i = 0; i < SNAPSHOT_DOCK_EXROM_PAGES; i++) {
@@ -316,61 +326,70 @@ libspectrum_error libspectrum_snap_free(libspectrum_snap *snap)
         libspectrum_free(libspectrum_snap_exrom_cart(snap, i));
     }
 
-    if (libspectrum_snap_beta_rom(snap, 0))
+    if (libspectrum_snap_beta_rom(snap, 0)) {
         libspectrum_free(libspectrum_snap_beta_rom(snap, 0));
+    }
 
-    if (libspectrum_snap_plusd_rom(snap, 0))
+    if (libspectrum_snap_plusd_rom(snap, 0)) {
         libspectrum_free(libspectrum_snap_plusd_rom(snap, 0));
-    if (libspectrum_snap_plusd_ram(snap, 0))
+    }
+    if (libspectrum_snap_plusd_ram(snap, 0)) {
         libspectrum_free(libspectrum_snap_plusd_ram(snap, 0));
-
-    if (libspectrum_snap_interface1_rom(snap, 0))
+    }
+    if (libspectrum_snap_interface1_rom(snap, 0)) {
         libspectrum_free(libspectrum_snap_interface1_rom(snap, 0));
-
-    if (libspectrum_snap_spectranet_w5100(snap, 0))
+    }
+    if (libspectrum_snap_spectranet_w5100(snap, 0)) {
         libspectrum_free(libspectrum_snap_spectranet_w5100(snap, 0));
-    if (libspectrum_snap_spectranet_flash(snap, 0))
+    }
+    if (libspectrum_snap_spectranet_flash(snap, 0)) {
         libspectrum_free(libspectrum_snap_spectranet_flash(snap, 0));
-    if (libspectrum_snap_spectranet_ram(snap, 0))
+    }
+    if (libspectrum_snap_spectranet_ram(snap, 0)) {
         libspectrum_free(libspectrum_snap_spectranet_ram(snap, 0));
-
-    if (libspectrum_snap_usource_rom(snap, 0))
+    }
+    if (libspectrum_snap_usource_rom(snap, 0)) {
         libspectrum_free(libspectrum_snap_usource_rom(snap, 0));
-
-    if (libspectrum_snap_disciple_rom(snap, 0))
+    }
+    if (libspectrum_snap_disciple_rom(snap, 0)) {
         libspectrum_free(libspectrum_snap_disciple_rom(snap, 0));
-    if (libspectrum_snap_disciple_ram(snap, 0))
+    }
+    if (libspectrum_snap_disciple_ram(snap, 0)) {
         libspectrum_free(libspectrum_snap_disciple_ram(snap, 0));
-
-    if (libspectrum_snap_didaktik80_rom(snap, 0))
+    }
+    if (libspectrum_snap_didaktik80_rom(snap, 0)) {
         libspectrum_free(libspectrum_snap_didaktik80_rom(snap, 0));
-    if (libspectrum_snap_didaktik80_ram(snap, 0))
+    }
+    if (libspectrum_snap_didaktik80_ram(snap, 0)) {
         libspectrum_free(libspectrum_snap_didaktik80_ram(snap, 0));
+    }
 
     libspectrum_free(libspectrum_snap_divide_eprom(snap, 0));
-    for (i = 0; i < SNAPSHOT_DIVIDE_PAGES; i++)
+    for (i = 0; i < SNAPSHOT_DIVIDE_PAGES; i++) {
         libspectrum_free(libspectrum_snap_divide_ram(snap, i));
-
+    }
     libspectrum_free(libspectrum_snap_divmmc_eprom(snap, 0));
-    for (i = 0; i < SNAPSHOT_DIVMMC_PAGES; i++)
+    for (i = 0; i < SNAPSHOT_DIVMMC_PAGES; i++) {
         libspectrum_free(libspectrum_snap_divmmc_ram(snap, i));
-
-    if (libspectrum_snap_ulaplus_palette(snap, 0))
+    }
+    if (libspectrum_snap_ulaplus_palette(snap, 0)) {
         libspectrum_free(libspectrum_snap_ulaplus_palette(snap, 0));
-
-    if (libspectrum_snap_multiface_ram(snap, 0))
+    }
+    if (libspectrum_snap_multiface_ram(snap, 0)) {
         libspectrum_free(libspectrum_snap_multiface_ram(snap, 0));
-
+    }
     libspectrum_free(snap);
 
     return LIBSPECTRUM_ERROR_NONE;
 }
 
+
 // Read in a snapshot, optionally guessing what type it is
-libspectrum_error
-libspectrum_snap_read(libspectrum_snap *snap, const libspectrum_byte *buffer,
-               size_t length, libspectrum_id_t type,
-               const char *filename)
+libspectrum_error libspectrum_snap_read(libspectrum_snap *snap,
+                                        const libspectrum_byte *buffer,
+                                        size_t length,
+                                        libspectrum_id_t type,
+                                        const char *filename)
 {
     libspectrum_id_t raw_type;
     libspectrum_class_t class;
@@ -386,10 +405,7 @@ libspectrum_snap_read(libspectrum_snap *snap, const libspectrum_byte *buffer,
 
         // If we still can't identify it, give up
         if (type == LIBSPECTRUM_ID_UNKNOWN) {
-            libspectrum_print_error(
-                LIBSPECTRUM_ERROR_UNKNOWN,
-    "libspectrum_snap_read: couldn't identify file"
-);
+            libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN, "libspectrum_snap_read: couldn't identify file");
             return LIBSPECTRUM_ERROR_UNKNOWN;
         }
     }
@@ -430,44 +446,52 @@ libspectrum_snap_read(libspectrum_snap *snap, const libspectrum_byte *buffer,
 
     switch (type) {
 
-    case LIBSPECTRUM_ID_SNAPSHOT_PLUSD:
-        error = libspectrum_plusd_read(snap, buffer, length); break;
+        case LIBSPECTRUM_ID_SNAPSHOT_PLUSD:
+            error = libspectrum_plusd_read(snap, buffer, length);
+            break;
 
-    case LIBSPECTRUM_ID_SNAPSHOT_SNA:
-        error = internal_sna_read(snap, buffer, length); break;
+        case LIBSPECTRUM_ID_SNAPSHOT_SNA:
+            error = internal_sna_read(snap, buffer, length);
+            break;
 
-    case LIBSPECTRUM_ID_SNAPSHOT_SNP:
-        error = libspectrum_snp_read(snap, buffer, length); break;
+        case LIBSPECTRUM_ID_SNAPSHOT_SNP:
+            error = libspectrum_snp_read(snap, buffer, length);
+            break;
 
-    case LIBSPECTRUM_ID_SNAPSHOT_SP:
-        error = libspectrum_sp_read(snap, buffer, length); break;
+        case LIBSPECTRUM_ID_SNAPSHOT_SP:
+            error = libspectrum_sp_read(snap, buffer, length);
+            break;
 
-    case LIBSPECTRUM_ID_SNAPSHOT_SZX:
-        error = libspectrum_szx_read(snap, buffer, length); break;
+        case LIBSPECTRUM_ID_SNAPSHOT_SZX:
+            error = libspectrum_szx_read(snap, buffer, length);
+            break;
 
-    case LIBSPECTRUM_ID_SNAPSHOT_Z80:
-        error = internal_z80_read(snap, buffer, length); break;
+        case LIBSPECTRUM_ID_SNAPSHOT_Z80:
+           error = internal_z80_read(snap, buffer, length);
+           break;
 
-    case LIBSPECTRUM_ID_SNAPSHOT_ZXS:
-        error = libspectrum_zxs_read(snap, buffer, length); break;
+        case LIBSPECTRUM_ID_SNAPSHOT_ZXS:
+            error = libspectrum_zxs_read(snap, buffer, length);
+            break;
 
-    default:
-        libspectrum_print_error(LIBSPECTRUM_ERROR_LOGIC,
-                 "libspectrum_snap_read: unknown snapshot type %d",
-                 type);
-        libspectrum_free(new_buffer);
-        return LIBSPECTRUM_ERROR_LOGIC;
+        default:
+            libspectrum_print_error(LIBSPECTRUM_ERROR_LOGIC, "libspectrum_snap_read: unknown snapshot type %d", type);
+            libspectrum_free(new_buffer);
+            return LIBSPECTRUM_ERROR_LOGIC;
     }
 
     libspectrum_free(new_buffer);
     return error;
 }
 
-libspectrum_error
-libspectrum_snap_write(libspectrum_byte **buffer, size_t *length,
-            int *out_flags, libspectrum_snap *snap,
-            libspectrum_id_t type, libspectrum_creator *creator,
-            int in_flags)
+
+libspectrum_error libspectrum_snap_write(libspectrum_byte **buffer,
+                                         size_t *length,
+                                         int *out_flags,
+                                         libspectrum_snap *snap,
+                                         libspectrum_id_t type,
+                                         libspectrum_creator *creator,
+                                         int in_flags)
 {
     libspectrum_byte *ptr = *buffer;
     libspectrum_buffer *new_buffer = libspectrum_buffer_alloc();
@@ -477,10 +501,13 @@ libspectrum_snap_write(libspectrum_byte **buffer, size_t *length,
     return error;
 }
 
-libspectrum_error
-libspectrum_snap_write_buffer(libspectrum_buffer *buffer, int *out_flags,
-                                                              libspectrum_snap *snap, libspectrum_id_t type,
-                                                              libspectrum_creator *creator, int in_flags)
+
+libspectrum_error libspectrum_snap_write_buffer(libspectrum_buffer *buffer,
+                                                int *out_flags,
+                                                libspectrum_snap *snap,
+                                                libspectrum_id_t type,
+                                                libspectrum_creator *creator,
+                                                int in_flags)
 {
     libspectrum_class_t class;
     libspectrum_error error;
@@ -497,49 +524,43 @@ libspectrum_snap_write_buffer(libspectrum_buffer *buffer, int *out_flags,
 
     switch (type) {
 
-    case LIBSPECTRUM_ID_SNAPSHOT_SNA:
-        error = libspectrum_sna_write(buffer, out_flags, snap, in_flags);
-        break;
+        case LIBSPECTRUM_ID_SNAPSHOT_SNA:
+            error = libspectrum_sna_write(buffer, out_flags, snap, in_flags);
+            break;
 
-    case LIBSPECTRUM_ID_SNAPSHOT_SZX:
-        error = libspectrum_szx_write(buffer, out_flags, snap, creator, in_flags);
-        break;
+        case LIBSPECTRUM_ID_SNAPSHOT_SZX:
+            error = libspectrum_szx_write(buffer, out_flags, snap, creator, in_flags);
+            break;
 
-    case LIBSPECTRUM_ID_SNAPSHOT_Z80:
-        error = libspectrum_z80_write2(buffer, out_flags, snap, in_flags);
-        break;
+        case LIBSPECTRUM_ID_SNAPSHOT_Z80:
+            error = libspectrum_z80_write2(buffer, out_flags, snap, in_flags);
+            break;
 
-    default:
-        libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN, "libspectrum_snap_write: format not supported");
-        error = LIBSPECTRUM_ERROR_UNKNOWN;
+        default:
+            libspectrum_print_error(LIBSPECTRUM_ERROR_UNKNOWN, "libspectrum_snap_write: format not supported");
+            error = LIBSPECTRUM_ERROR_UNKNOWN;
 
     }
 
     return error;
 }
 
-/* Given a 48K memory dump `data', place it into the
-      appropriate bits of `snap' for a 48K machine */
 
+// Given a 48K memory dump `data', place it into the appropriate bits of `snap' for a 48K machine
 libspectrum_error libspectrum_split_to_48k_pages(libspectrum_snap *snap, const libspectrum_byte* data)
 {
     libspectrum_byte *buffer[3];
     size_t i;
 
     // If any of the three pages are already occupied, barf
-    if (libspectrum_snap_pages(snap, 5) ||
-            libspectrum_snap_pages(snap, 2) ||
-            libspectrum_snap_pages(snap, 0)) {
-        libspectrum_print_error(
-            LIBSPECTRUM_ERROR_LOGIC,
-            "libspectrum_split_to_48k_pages: RAM page already in use"
-);
+    if (libspectrum_snap_pages(snap, 5) || libspectrum_snap_pages(snap, 2) || libspectrum_snap_pages(snap, 0)) {
+        libspectrum_print_error(LIBSPECTRUM_ERROR_LOGIC, "libspectrum_split_to_48k_pages: RAM page already in use");
         return LIBSPECTRUM_ERROR_LOGIC;
     }
 
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++) {
         buffer[i] = libspectrum_new(libspectrum_byte, 0x4000);
-
+    }
     libspectrum_snap_set_pages(snap, 5, buffer[0]);
     libspectrum_snap_set_pages(snap, 2, buffer[1]);
     libspectrum_snap_set_pages(snap, 0, buffer[2]);

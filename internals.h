@@ -25,7 +25,7 @@
 #ifndef LIBSPECTRUM_INTERNALS_H
 #define LIBSPECTRUM_INTERNALS_H
 
-#ifdef HAVE_LIB_GLIB        // Only if we've got the real glib
+#ifdef HAVE_LIB_GLIB // Only if we've got the real glib
 #include <glib.h>
 #endif // #ifdef HAVE_LIB_GLIB
 
@@ -315,7 +315,7 @@ extern const int LIBSPECTRUM_BITS_IN_BYTE;
 
 // glib replacement functions
 
-#ifndef HAVE_LIB_GLIB        // Only if we are using glib replacement
+#ifndef HAVE_LIB_GLIB // Only if we are using glib replacement
 void libspectrum_slist_cleanup(void);
 
 void libspectrum_hashtable_cleanup(void);
