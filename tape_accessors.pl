@@ -54,6 +54,7 @@ print << "CODE";
 #include "internals.h"
 #include "tape_block.h"
 
+
 CODE
 
 my( $name, $default, $indexed, $pointer, $started );
@@ -64,14 +65,15 @@ sub trailer ($) {
 
     return << "CODE";
 
-    default:
-      libspectrum_print_error(
-        LIBSPECTRUM_ERROR_INVALID,
-        "invalid block type 0x%02x given to %s", block->type, __func__
-      );
-      return $default;
-  }
+        default:
+            libspectrum_print_error(LIBSPECTRUM_ERROR_INVALID,
+                                    "invalid block type 0x%02x given to %s",
+                                    block->type,
+                                    __func__);
+            return $default;
+    }
 }
+
 
 CODE
 }
@@ -88,7 +90,7 @@ while( <> ) {
 
 	$member ||= $name;
 
-	printf "    case LIBSPECTRUM_TAPE_BLOCK_%s: return %sblock->types.$type.$member%s;\n",
+	printf "        case LIBSPECTRUM_TAPE_BLOCK_%s:\n            return %sblock->types.$type.$member%s;\n",
 	    uc $type, $pointer ? '&' : '', $indexed ? '[ index ]' : '';
 
     } else {
@@ -99,9 +101,9 @@ while( <> ) {
 
 	( $return_type, $name, $indexed, $default, $pointer ) = split;
 
-	print "$return_type\nlibspectrum_tape_block_$name( libspectrum_tape_block *block";
+	print "$return_type libspectrum_tape_block_$name(libspectrum_tape_block *block";
 	print ', size_t index' if $indexed;
-	print " )\n{\n  switch ( block->type ) {\n\n";
+	print ")\n{\n    switch (block->type) {\n\n";
 
         $started = 1;
     }
